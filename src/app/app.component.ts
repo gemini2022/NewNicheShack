@@ -25,8 +25,8 @@ export class AppComponent {
 
 
 
-  onGetListItems(pageNumber: number) {
-    this.dataService.get('api/List', [{ key: 'pageNumber', value: pageNumber }]).subscribe(
+  onLoadList() {
+    this.dataService.get('api/List').subscribe(
       (listItems: Array<ListItem>) => {
         this.testList = listItems;
       }

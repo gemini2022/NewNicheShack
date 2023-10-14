@@ -69,7 +69,7 @@ body {
 
 
 
-.item {
+.list-item {
     height: 26px;
     outline: none;
     overflow: hidden;
@@ -80,7 +80,7 @@ body {
     text-overflow: ellipsis;
     border: 1px solid transparent;
 
-    &:hover:not(.edited-item):not(.unselected-item):not(.primary-selection):not(.secondary-selection-all):not(.secondary-selection-top):not(.secondary-selection-middle):not(.secondary-selection-bottom):not(.primary-selection-border):not(.disabled-item) {
+    &:hover:not(.edited-list-item):not(.unselected-list-item):not(.primary-selection):not(.secondary-selection-all):not(.secondary-selection-top):not(.secondary-selection-middle):not(.secondary-selection-bottom):not(.primary-selection-border):not(.disabled-list-item) {
         color: #d2d2d2;
         background: #ffbb0008;
     }
@@ -105,7 +105,7 @@ body {
 
 
 
-.unselected-item {
+.unselected-list-item {
     color: #a0a0a0;
     border-color: #ffba00d9;
 
@@ -158,7 +158,7 @@ body {
 
 
 
-.edited-item {
+.edited-list-item {
     outline: none;
     color: #dcdcdc;
     border-right: none;
@@ -169,6 +169,6 @@ body {
 
 
 
-.disabled-item {
+.disabled-list-item {
     opacity: 0.2;
 }

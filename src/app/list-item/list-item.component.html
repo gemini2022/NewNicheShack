@@ -1,20 +1,20 @@
-<div class="item"
-     #htmlElement
+<div #htmlElement
      tabindex="-1"
-     (dblclick)="onDoubleClick.emit()"
+     class="list-item"
      (paste)="this.onPaste($event)"
+     (dblclick)="onDoubleClick.emit()"
      (contextmenu)="$event.preventDefault();"
      (keydown)="this.getTextCaretPosition()"
      (mouseup)="this.getTextCaretPosition()"
      [contentEditable]="this.inEditMode == true"
-     [ngClass]="{'edited-item': this.inEditMode,
-                 'disabled-item': this.isDisabled,
-                 'unselected-item': this.hasUnselection,
+     [ngClass]="{'edited-list-item': this.inEditMode,
+                 'disabled-list-item': this.isDisabled,
+                 'unselected-list-item': this.hasUnselection,
                  'primary-selection': this.hasPrimarySelection && this.hasSecondarySelection,
                  'secondary-selection-all': this.secondarySelectionType == SecondarySelectionType.All,
                  'secondary-selection-top': this.secondarySelectionType == SecondarySelectionType.Top,
+                 'primary-selection-border-only': this.hasPrimarySelection && !this.hasSecondarySelection,
                  'secondary-selection-middle': this.secondarySelectionType == SecondarySelectionType.Middle,
-                 'secondary-selection-bottom': this.secondarySelectionType == SecondarySelectionType.Bottom,
-                 'primary-selection-border-only': this.hasPrimarySelection && !this.hasSecondarySelection}"
+                 'secondary-selection-bottom': this.secondarySelectionType == SecondarySelectionType.Bottom}"
      (mousedown)="onListItemDown($event); this.getTextCaretPosition()"
      [ngStyle]="{'display': this.listPasted ? 'block' : null, 'height': this.listPasted ? 'fit-content' : null}">{{listItem.text}}</div>

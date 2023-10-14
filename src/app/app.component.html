@@ -12,7 +12,7 @@
     <div style="width: 300px; height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
       <ns-list #list
                [list]="testList"
-               (getListItemsEvent)="onGetListItems($event)"
+               (loadListEvent)="onLoadList()"
                (addedListItemEvent)="onListItemAdded($event)"
                (editedListItemEvent)="onListItemEdited($event)"
                (pastedListItemsEvent)="onPastedListItems($event)"
