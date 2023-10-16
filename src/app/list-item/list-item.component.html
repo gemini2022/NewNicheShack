@@ -3,10 +3,11 @@
      class="list-item"
      (paste)="this.onPaste($event)"
      (dblclick)="onDoubleClick.emit()"
-     (contextmenu)="$event.preventDefault();"
      (keydown)="this.getTextCaretPosition()"
      (mouseup)="this.getTextCaretPosition()"
+     (contextmenu)="$event.preventDefault()"
      [contentEditable]="this.inEditMode == true"
+     (input)="onInput.emit(htmlElement.innerText)"
      [ngClass]="{'edited-list-item': this.inEditMode,
                  'disabled-list-item': this.isDisabled,
                  'unselected-list-item': this.hasUnselection,

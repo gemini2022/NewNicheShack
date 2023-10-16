@@ -23,6 +23,7 @@ export class List {
 
     // Events
     @Output() public loadListEvent: EventEmitter<void> = new EventEmitter();
+    @Output() public inputTypedEvent: EventEmitter<string> = new EventEmitter();
     @Output() public addedListItemEvent: EventEmitter<string> = new EventEmitter();
     @Output() public editedListItemEvent: EventEmitter<ListItem> = new EventEmitter();
     @Output() public deletedListItemsEvent: EventEmitter<Array<any>> = new EventEmitter();
@@ -36,7 +37,7 @@ export class List {
 
 
     private ngOnInit(): void {
-        this.loadList();
+        this.load();
     }
 
 
@@ -50,7 +51,7 @@ export class List {
 
 
 
-    private loadList(): void {
+    private load(): void {
         this._loading = true;
         this.loadListEvent.emit();
     }
@@ -327,7 +328,7 @@ export class List {
         this.list.length == 0 ? this.idsOfCurrentListItems.push(0) : this.list.forEach(x => this.idsOfCurrentListItems.push(x.id));
         this.list.unshift(new ListItem('', ''));
         window.setTimeout(() => {
-            this.listItemComponents.first.initialize(this);
+            this.listItemComponents.first.identify(this);
         })
     }
 
@@ -365,14 +366,20 @@ export class List {
 
 
 
-    public onTrackBy(index: number, listItem: ListItem) {
+    public onInput(text: string) {
+        if (this.list.some(listItem => listItem.text === text)) console.log('Duplicate Found');
+    }
+
+
+
+    public onTrackBy(index: number, listItem: ListItem): any {
         return listItem.id;
     }
 
 
 
     public reinitializeList(): void {
-        this.resetListItemProperties()
+        this.resetListItemProperties();
         this.eventListenersAdded = false;
         window.removeEventListener('keyup', this.onKeyUp);
         window.removeEventListener('keydown', this.onKeyDown);

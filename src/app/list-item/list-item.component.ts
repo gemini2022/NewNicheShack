@@ -29,8 +29,9 @@ export class ListItemComponent {
 
   // Input
   @Input() public listItem: ListItem = new ListItem('', '');
-  
+
   // Output
+  @Output() public onInput: EventEmitter<string> = new EventEmitter();
   @Output() public onDoubleClick: EventEmitter<void> = new EventEmitter();
   @Output() public onMouseDown: EventEmitter<ListItem> = new EventEmitter();
 
@@ -38,14 +39,15 @@ export class ListItemComponent {
   @ViewChild('htmlElement') htmlElement!: ElementRef<HTMLElement>;
 
 
-  public initialize(list: List) {
-    this.isNew = true;
-    this.inEditMode = true;
-    this.hasSecondarySelection = true;
+
+
+  public identify(list: List) {
+    this.isNew = this.inEditMode = this.hasSecondarySelection = true;
     window.setTimeout(() => this.htmlElement.nativeElement.focus());
+
     list.listItemComponents.forEach(x => {
       if (!x.inEditMode) x.isDisabled = true;
-    })
+    });
   }
 
 
@@ -54,9 +56,10 @@ export class ListItemComponent {
   public setToEditMode(list: List) {
     this.inEditMode = true;
     this.hasPrimarySelection = false;
-    list.listItemComponents.forEach(x => {
-      if (!x.inEditMode) x.isDisabled = true;
-    })
+
+    for (const listItem of list.listItemComponents) {
+      if (!listItem.inEditMode) listItem.isDisabled = true;
+    }
     this.selectRange();
     this.textCaretPosition = window.getSelection()!;
   }
@@ -75,6 +78,9 @@ export class ListItemComponent {
 
 
 
+
+
+
   public exitEditMode(list: List, exitEditType?: ExitEditType) {
     if (this.htmlElement!.nativeElement.innerText.trim().length > 0) {
       exitEditType === ExitEditType.Escape ? this.cancelListItemEdit(list) : this.completeListItemEdit(list);
@@ -83,20 +89,20 @@ export class ListItemComponent {
   }
 
 
+
+
+
   private cancelListItemEdit(list: List): void {
     if (this.isNew) {
       list.list.shift();
       list.reinitializeList();
-      return
-    }
-    this.htmlElement!.nativeElement.innerText = '';
-
-    window.setTimeout(()=> {
+    } else {
       this.htmlElement!.nativeElement.innerText = this.listItem.text.trim();
-    })
-
-    this.reselectItem(list);
+      this.reselectItem(list);
+    }
   }
+
+
 
 
 
@@ -121,11 +127,11 @@ export class ListItemComponent {
   }
 
 
-  
 
 
 
-  
+
+
 
 
 

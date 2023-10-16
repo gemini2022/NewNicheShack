@@ -2,14 +2,15 @@
      class="list-container"
      (mousedown)="$event.clientX - listContainer.getBoundingClientRect().left >= listContainer.clientWidth ? stopMouseDownPropagation = true : null">
 
-    <div *ngIf="loading" style="position: absolute; display: flex; top: 0; right: 0; bottom: 0; left: 0; background: rgba(30, 30, 30, 0.801); align-items: center; justify-content: center;">
-        <i class="fa-solid fa-spinner fa-spin-pulse" style="font-size: 30px; color: #dadada;"></i>
+    <div *ngIf="loading" class="list-spinner">
+        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
     <div *ngFor="let listItem of list; trackBy:onTrackBy">
         <ns-list-item #listItemComponent
                       [listItem]="listItem"
                       (onDoubleClick)="editListItem()"
+                      (onInput)="onInput($event)"
                       (onMouseDown)="stopMouseDownPropagation = true; $event ? selectListItem($event) : null">
         </ns-list-item>
     </div>

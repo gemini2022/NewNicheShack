@@ -55,6 +55,21 @@ body {
 }
 
 
+.list-spinner {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    font-size: 30px;
+    color: #dadada;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    background: rgba(30, 30, 30, 0.801);
+}
+
+
 .pasted-list-item {
     height: 26px;
     display: flex;
@@ -70,6 +85,7 @@ body {
 
 
 .list-item {
+    position: relative;
     height: 26px;
     outline: none;
     overflow: hidden;
@@ -161,7 +177,7 @@ body {
 .edited-list-item {
     outline: none;
     color: #dcdcdc;
-    border-right: none;
+    // border-right: none;
     text-overflow: unset;
     background: #2b2b2b;
     border-color: #ffba0040;
