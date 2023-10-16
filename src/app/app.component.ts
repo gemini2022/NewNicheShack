@@ -1,13 +1,13 @@
 import { ListItem } from './list-item';
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
-import { ListComponent } from './list/list.component';
+import { EditableListComponent } from './editable-list/editable-list.component';
 import { DataService } from './services/data.service';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent],
+  imports: [CommonModule, EditableListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -19,7 +19,7 @@ export class AppComponent {
   public testList: Array<ListItem> = new Array<ListItem>();
 
   // ViewChild
-  @ViewChild('list') listComponent!: ListComponent;
+  @ViewChild('list') listComponent!: EditableListComponent;
 
 
 

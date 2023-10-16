@@ -1,10 +1,10 @@
 import { ListItem } from "./list-item";
 import { ArrowKeyType, ExitEditType } from "./enums";
-import { ListItemComponent } from "./list-item/list-item.component";
+import { EditableListItemComponent } from "./editable-list-item/editable-list-item.component";
 import { Directive, EventEmitter, Input, Output, QueryList, ViewChildren } from "@angular/core";
 
 @Directive()
-export class List {
+export class EditableList {
     // Private
     private _loading!: boolean;
     private idOfEditedListItem: any;
@@ -32,7 +32,7 @@ export class List {
     @Output() public listItemsToBeDeletedEvent: EventEmitter<Array<ListItem>> = new EventEmitter();
 
     // View Children
-    @ViewChildren('listItemComponent') listItemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
+    @ViewChildren('listItemComponent') listItemComponents: QueryList<EditableListItemComponent> = new QueryList<EditableListItemComponent>();
 
 
 
@@ -149,7 +149,7 @@ export class List {
 
 
 
-    private setSelectedItems(listItem: ListItemComponent): void {
+    private setSelectedItems(listItem: EditableListItemComponent): void {
         this.addEventListeners();
         listItem.htmlElement.nativeElement.focus();
 
@@ -165,7 +165,7 @@ export class List {
 
 
 
-    private onItemSelectionUsingShiftKey(listItemComponent: ListItemComponent) {
+    private onItemSelectionUsingShiftKey(listItemComponent: EditableListItemComponent) {
         this.listItemComponents.forEach(x => {
             x.hasUnselection = false;
             x.hasPrimarySelection = false;
@@ -187,7 +187,7 @@ export class List {
 
 
 
-    private onItemSelectionUsingCtrlKey(listItemComponent: ListItemComponent) {
+    private onItemSelectionUsingCtrlKey(listItemComponent: EditableListItemComponent) {
         this.listItemComponents.forEach(x => {
             x.isPivot = false;
             x.hasUnselection = false;
@@ -202,7 +202,7 @@ export class List {
 
 
 
-    private onItemSelectionUsingNoModifierKey(listItemComponent: ListItemComponent): void {
+    private onItemSelectionUsingNoModifierKey(listItemComponent: EditableListItemComponent): void {
         this.resetListItemProperties();
         listItemComponent.isPivot = true;
         listItemComponent.hasPrimarySelection = true;
@@ -248,7 +248,7 @@ export class List {
 
 
     private autoselectMultipleListItems(): void {
-        let listItemComponent: ListItemComponent | undefined;
+        let listItemComponent: EditableListItemComponent | undefined;
 
         window.setTimeout(() => {
             this.list.forEach((item, index) => {

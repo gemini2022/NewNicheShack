@@ -7,11 +7,11 @@
     </div>
 
     <div *ngFor="let listItem of list; trackBy:onTrackBy">
-        <ns-list-item #listItemComponent
+        <ns-editable-list-item #listItemComponent
                       [listItem]="listItem"
                       (onDoubleClick)="editListItem()"
                       (onInput)="onInput($event)"
                       (onMouseDown)="stopMouseDownPropagation = true; $event ? selectListItem($event) : null">
-        </ns-list-item>
+        </ns-editable-list-item>
     </div>
 </div>

@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListComponent } from './list.component';
+import { EditableListComponent } from './editable-list.component';
 
 describe('ListComponent', () => {
-  let component: ListComponent;
-  let fixture: ComponentFixture<ListComponent>;
+  let component: EditableListComponent;
+  let fixture: ComponentFixture<EditableListComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ListComponent]
+      imports: [EditableListComponent]
     });
-    fixture = TestBed.createComponent(ListComponent);
+    fixture = TestBed.createComponent(EditableListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

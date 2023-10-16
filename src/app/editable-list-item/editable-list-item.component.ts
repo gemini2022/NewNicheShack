@@ -1,17 +1,17 @@
-import { List } from '../list';
+import { EditableList } from '../editable-list';
 import { ListItem } from '../list-item';
 import { CommonModule } from '@angular/common';
 import { ArrowKeyType, ExitEditType, SecondarySelectionType } from '../enums';
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'ns-list-item',
+  selector: 'ns-editable-list-item',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './list-item.component.html',
-  styleUrls: ['./list-item.component.scss']
+  templateUrl: './editable-list-item.component.html',
+  styleUrls: ['./editable-list-item.component.scss']
 })
-export class ListItemComponent {
+export class EditableListItemComponent {
   // Private
   private textCaretPosition!: Selection;
 
@@ -41,7 +41,7 @@ export class ListItemComponent {
 
 
 
-  public identify(list: List) {
+  public identify(list: EditableList) {
     this.isNew = this.inEditMode = this.hasSecondarySelection = true;
     window.setTimeout(() => this.htmlElement.nativeElement.focus());
 
@@ -53,7 +53,7 @@ export class ListItemComponent {
 
 
 
-  public setToEditMode(list: List) {
+  public setToEditMode(list: EditableList) {
     this.inEditMode = true;
     this.hasPrimarySelection = false;
 
@@ -81,7 +81,7 @@ export class ListItemComponent {
 
 
 
-  public exitEditMode(list: List, exitEditType?: ExitEditType) {
+  public exitEditMode(list: EditableList, exitEditType?: ExitEditType) {
     if (this.htmlElement!.nativeElement.innerText.trim().length > 0) {
       exitEditType === ExitEditType.Escape ? this.cancelListItemEdit(list) : this.completeListItemEdit(list);
 
@@ -92,7 +92,7 @@ export class ListItemComponent {
 
 
 
-  private cancelListItemEdit(list: List): void {
+  private cancelListItemEdit(list: EditableList): void {
     if (this.isNew) {
       list.list.shift();
       list.reinitializeList();
@@ -106,7 +106,7 @@ export class ListItemComponent {
 
 
 
-  private completeListItemEdit(list: List): void {
+  private completeListItemEdit(list: EditableList): void {
     if (this.isNew) {
       this.listPasted ? list.pastedListItemsEvent.emit(this.htmlElement.nativeElement.innerText.split('\n')) : list.addedListItemEvent.emit(this.htmlElement.nativeElement.innerText);
 
@@ -117,7 +117,7 @@ export class ListItemComponent {
 
 
 
-  public reselectItem(list: List): void {
+  public reselectItem(list: EditableList): void {
     this.isNew = false;
     this.inEditMode = false;
     this.hasPrimarySelection = true;
@@ -135,7 +135,7 @@ export class ListItemComponent {
 
 
 
-  public setFirstListItemSecondarySelectionType(secondListItem: ListItemComponent) {
+  public setFirstListItemSecondarySelectionType(secondListItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
       this.secondarySelectionType = secondListItem.hasSecondarySelection || secondListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
     }
@@ -143,7 +143,7 @@ export class ListItemComponent {
 
 
 
-  public setMiddleListItemSecondarySelectionType(prevListItem: ListItemComponent, nextListItem: ListItemComponent) {
+  public setMiddleListItemSecondarySelectionType(prevListItem: EditableListItemComponent, nextListItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
 
       if (!prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
@@ -163,7 +163,7 @@ export class ListItemComponent {
 
 
 
-  public setLastListItemSecondarySelectionType(secondToLastListItem: ListItemComponent) {
+  public setLastListItemSecondarySelectionType(secondToLastListItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
       this.secondarySelectionType = secondToLastListItem.hasSecondarySelection || secondToLastListItem.hasUnselection ? SecondarySelectionType.Bottom : SecondarySelectionType.All;
     }
@@ -171,7 +171,7 @@ export class ListItemComponent {
 
 
 
-  public onArrowKey(list: List, arrowKeyType: ArrowKeyType): void {
+  public onArrowKey(list: EditableList, arrowKeyType: ArrowKeyType): void {
     if (this.inEditMode) return;
     const currentIndex = list.list.indexOf(this.listItem);
     const nextIndex = arrowKeyType === ArrowKeyType.Up ? currentIndex - 1 : currentIndex + 1;
