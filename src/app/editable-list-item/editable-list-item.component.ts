@@ -1,8 +1,9 @@
-import { EditableList } from '../editable-list';
 import { ListItem } from '../list-item';
 import { CommonModule } from '@angular/common';
+import { EditableList } from '../editable-list';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { ListItemComponent } from '../list-item/list-item.component';
 import { ArrowKeyType, ExitEditType, SecondarySelectionType } from '../enums';
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'ns-editable-list-item',
@@ -11,7 +12,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
   templateUrl: './editable-list-item.component.html',
   styleUrls: ['./editable-list-item.component.scss']
 })
-export class EditableListItemComponent {
+export class EditableListItemComponent extends ListItemComponent {
   // Private
   private textCaretPosition!: Selection;
 
@@ -22,48 +23,37 @@ export class EditableListItemComponent {
   public inEditMode: boolean = false;
   public listPasted: boolean = false;
   public hasUnselection: boolean = false;
-  public hasPrimarySelection: boolean = false;
   public hasSecondarySelection: boolean = false;
   public SecondarySelectionType = SecondarySelectionType;
   public secondarySelectionType: SecondarySelectionType | undefined | null;
 
-  // Input
-  @Input() public listItem: ListItem = new ListItem('', '');
-
   // Output
   @Output() public onInput: EventEmitter<string> = new EventEmitter();
   @Output() public onDoubleClick: EventEmitter<void> = new EventEmitter();
-  @Output() public onMouseDown: EventEmitter<ListItem> = new EventEmitter();
-
-  // View Child
-  @ViewChild('htmlElement') htmlElement!: ElementRef<HTMLElement>;
 
 
 
-
-  public identify(list: EditableList) {
+  public identify(editableList: EditableList) {
     this.isNew = this.inEditMode = this.hasSecondarySelection = true;
     window.setTimeout(() => this.htmlElement.nativeElement.focus());
 
-    list.listItemComponents.forEach(x => {
+    editableList.editableListItemComponents.forEach(x => {
       if (!x.inEditMode) x.isDisabled = true;
     });
   }
 
 
 
-
-  public setToEditMode(list: EditableList) {
+  public setToEditMode(editableList: EditableList) {
     this.inEditMode = true;
     this.hasPrimarySelection = false;
 
-    for (const listItem of list.listItemComponents) {
+    for (const listItem of editableList.editableListItemComponents) {
       if (!listItem.inEditMode) listItem.isDisabled = true;
     }
     this.selectRange();
     this.textCaretPosition = window.getSelection()!;
   }
-
 
 
 
@@ -77,61 +67,44 @@ export class EditableListItemComponent {
 
 
 
-
-
-
-
-  public exitEditMode(list: EditableList, exitEditType?: ExitEditType) {
+  public exitEditMode(editableList: EditableList, exitEditType?: ExitEditType) {
     if (this.htmlElement!.nativeElement.innerText.trim().length > 0) {
-      exitEditType === ExitEditType.Escape ? this.cancelListItemEdit(list) : this.completeListItemEdit(list);
-
-    } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit(list);
+      exitEditType === ExitEditType.Escape ? this.cancelListItemEdit(editableList) : this.completeListItemEdit(editableList);
+    } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit(editableList);
   }
 
 
 
-
-
-  private cancelListItemEdit(list: EditableList): void {
+  private cancelListItemEdit(editableList: EditableList): void {
     if (this.isNew) {
-      list.list.shift();
-      list.reinitializeList();
+      editableList.list.shift();
+      editableList.reinitializeList();
     } else {
       this.htmlElement!.nativeElement.innerText = this.listItem.text.trim();
-      this.reselectItem(list);
+      this.reselectItem(editableList);
     }
   }
 
 
 
-
-
-  private completeListItemEdit(list: EditableList): void {
+  private completeListItemEdit(editableList: EditableList): void {
     if (this.isNew) {
-      this.listPasted ? list.pastedListItemsEvent.emit(this.htmlElement.nativeElement.innerText.split('\n')) : list.addedListItemEvent.emit(this.htmlElement.nativeElement.innerText);
-
+      this.listPasted ? editableList.pastedListItemsEvent.emit(this.htmlElement.nativeElement.innerText.split('\n')) : editableList.addedListItemEvent.emit(this.htmlElement.nativeElement.innerText);
     } else {
-      list.editedListItemEvent.emit(new ListItem(this.listItem.id, this.htmlElement.nativeElement.innerText));
+      editableList.editedListItemEvent.emit(new ListItem(this.listItem.id, this.htmlElement.nativeElement.innerText));
     }
   }
 
 
 
-  public reselectItem(list: EditableList): void {
+  public reselectItem(editableList: EditableList): void {
     this.isNew = false;
     this.inEditMode = false;
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
     this.htmlElement!.nativeElement.focus();
-    list.listItemComponents.forEach(x => x.isDisabled = false);
+    editableList.editableListItemComponents.forEach(x => x.isDisabled = false);
   }
-
-
-
-
-
-
-
 
 
 
@@ -145,21 +118,15 @@ export class EditableListItemComponent {
 
   public setMiddleListItemSecondarySelectionType(prevListItem: EditableListItemComponent, nextListItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
-
-      if (!prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Top;
-
-      } else if (prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = nextListItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Bottom;
-
-      } else if (!prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Bottom : nextListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
-
-      } else if (prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = SecondarySelectionType.Middle;
-      }
+        if (!prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
+            this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Bottom : nextListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
+        } else if (!prevListItem.hasSecondarySelection || !nextListItem.hasSecondarySelection) {
+            this.secondarySelectionType = prevListItem.hasSecondarySelection ? SecondarySelectionType.Top : SecondarySelectionType.Bottom;
+        } else {
+            this.secondarySelectionType = SecondarySelectionType.Middle;
+        }
     }
-  }
+}
 
 
 
@@ -171,14 +138,9 @@ export class EditableListItemComponent {
 
 
 
-  public onArrowKey(list: EditableList, arrowKeyType: ArrowKeyType): void {
+  public override onArrowKey(editableList: EditableList, arrowKeyType: ArrowKeyType): void {
     if (this.inEditMode) return;
-    const currentIndex = list.list.indexOf(this.listItem);
-    const nextIndex = arrowKeyType === ArrowKeyType.Up ? currentIndex - 1 : currentIndex + 1;
-
-    if (nextIndex >= 0 && nextIndex < list.list.length) {
-      list.selectListItem(list.list[nextIndex]);
-    }
+    super.onArrowKey(editableList, arrowKeyType);
   }
 
 
@@ -188,7 +150,6 @@ export class EditableListItemComponent {
       this.textCaretPosition = window.getSelection()!
     });
   }
-
 
 
 
@@ -215,18 +176,14 @@ export class EditableListItemComponent {
     const textContent = this.htmlElement.nativeElement.firstChild!.textContent!;
     const caretOffset = this.textCaretPosition.anchorOffset;
 
-    // Insert the clipboard data into the text
     this.htmlElement.nativeElement.firstChild!.textContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
 
-    // Reposition the caret to reside after the clipboard data
     const range = document.createRange();
     range.setStart(this.htmlElement.nativeElement.firstChild!, caretOffset + clipboardData.length);
     const sel = window.getSelection();
     sel!.removeAllRanges();
     sel!.addRange(range);
   }
-
-
 
 
 
@@ -247,9 +204,8 @@ export class EditableListItemComponent {
 
 
 
-  public onListItemDown(e: MouseEvent) {
+  public override onListItemDown(e: MouseEvent) {
     const rightMouseButton = 2;
-    this.onMouseDown.emit();
 
     // As long as this list item is (NOT) currently in edited mode
     if (!this.inEditMode) {
@@ -259,7 +215,7 @@ export class EditableListItemComponent {
 
       // As long as we're (NOT) right clicking on a list item that's already selected
       if (!(e.button === rightMouseButton && this.hasSecondarySelection)) {
-        this.onMouseDown.emit(this.listItem)
+        super.onListItemDown(e);
       }
     }
   }

@@ -1,0 +1,43 @@
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListItem } from '../list-item';
+import { ArrowKeyType } from '../enums';
+import { List } from '../list';
+
+@Component({
+  selector: 'ns-list-item',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './list-item.component.html',
+  styleUrls: ['./list-item.component.scss']
+})
+export class ListItemComponent {
+  // Public
+  public hasPrimarySelection: boolean = false;
+
+  // Input
+  @Input() public listItem: ListItem = new ListItem('', '');
+
+  // Output
+  @Output() public onMouseDown: EventEmitter<ListItem> = new EventEmitter();
+
+  // View Child
+  @ViewChild('htmlElement') public htmlElement!: ElementRef<HTMLElement>;
+
+
+
+  public onListItemDown(e: MouseEvent) {
+    this.onMouseDown.emit(this.listItem);
+  }
+
+
+
+  public onArrowKey(list: List, arrowKeyType: ArrowKeyType): void {
+    const currentIndex = list.list.indexOf(this.listItem);
+    const nextIndex = arrowKeyType === ArrowKeyType.Up ? currentIndex - 1 : currentIndex + 1;
+
+    if (nextIndex >= 0 && nextIndex < list.list.length) {
+      list.selectListItem(list.list[nextIndex]);
+    }
+  }
+}

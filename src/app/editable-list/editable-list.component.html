@@ -7,7 +7,7 @@
     </div>
 
     <div *ngFor="let listItem of list; trackBy:onTrackBy">
-        <ns-editable-list-item #listItemComponent
+        <ns-editable-list-item #editableListItemComponent
                       [listItem]="listItem"
                       (onDoubleClick)="editListItem()"
                       (onInput)="onInput($event)"

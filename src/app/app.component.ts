@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { EditableListComponent } from './editable-list/editable-list.component';
 import { DataService } from './services/data.service';
+import { ListComponent } from './list/list.component';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, EditableListComponent],
+  imports: [CommonModule, ListComponent, EditableListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -31,6 +32,12 @@ export class AppComponent {
         this.testList = listItems;
       }
     )
+  }
+
+
+
+  onSelectedItems(selectedItems: Array<ListItem>) {
+    // console.log(selectedItems);
   }
 
 

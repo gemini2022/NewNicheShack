@@ -1,28 +1,24 @@
+import { List } from "./list";
 import { ListItem } from "./list-item";
 import { ArrowKeyType, ExitEditType } from "./enums";
+import { Directive, EventEmitter, Output, QueryList, ViewChildren } from "@angular/core";
 import { EditableListItemComponent } from "./editable-list-item/editable-list-item.component";
-import { Directive, EventEmitter, Input, Output, QueryList, ViewChildren } from "@angular/core";
 
 @Directive()
-export class EditableList {
+export class EditableList extends List {
     // Private
-    private _loading!: boolean;
     private idOfEditedListItem: any;
     private ctrlKeyDown: boolean = false;
     private shiftKeyDown: boolean = false;
-    private eventListenersAdded: boolean = false;
+    private removeKeyupListener!: () => void;
+    private removeMousedownListener!: () => void;
     private idOfNextSelectedListItemAfterDelete: any;
     private idsOfCurrentListItems: Array<any> = new Array<any>();
 
     // Public
     public stopMouseDownPropagation: boolean = false;
-    public get loading(): boolean { return this._loading; }
-
-    // Inputs
-    @Input() public list: Array<ListItem> = new Array<ListItem>();
 
     // Events
-    @Output() public loadListEvent: EventEmitter<void> = new EventEmitter();
     @Output() public inputTypedEvent: EventEmitter<string> = new EventEmitter();
     @Output() public addedListItemEvent: EventEmitter<string> = new EventEmitter();
     @Output() public editedListItemEvent: EventEmitter<ListItem> = new EventEmitter();
@@ -32,18 +28,12 @@ export class EditableList {
     @Output() public listItemsToBeDeletedEvent: EventEmitter<Array<ListItem>> = new EventEmitter();
 
     // View Children
-    @ViewChildren('listItemComponent') listItemComponents: QueryList<EditableListItemComponent> = new QueryList<EditableListItemComponent>();
+    @ViewChildren('editableListItemComponent') public editableListItemComponents: QueryList<EditableListItemComponent> = new QueryList<EditableListItemComponent>();
 
 
 
-    private ngOnInit(): void {
-        this.load();
-    }
-
-
-
-    private ngOnChanges(): void {
-        this.onLoadComplete();
+    protected override ngOnChanges(): void {
+        super.ngOnChanges();
         this.autoselectNewListItem();
         this.autoselectEditedListItem();
         this.autoselectNextListItemAfterDelete();
@@ -51,40 +41,23 @@ export class EditableList {
 
 
 
-    private load(): void {
-        this._loading = true;
-        this.loadListEvent.emit();
+    protected override addEventListeners(): void {
+        if (this.eventListenersAdded) return;
+        super.addEventListeners();
+        this.removeMousedownListener = this.renderer.listen('window', 'mousedown', () => this.onMouseDown());
+        this.removeKeyupListener = this.renderer.listen('window', 'keyup', (e: KeyboardEvent) => this.onKeyUp(e));
     }
 
 
 
-    private onLoadComplete(): void {
-        if (this._loading && this.list.length > 0) this._loading = false;
-    }
-
-
-
-    private addEventListeners(): void {
-        if (!this.eventListenersAdded) {
-            this.eventListenersAdded = true;
-            window.addEventListener('keyup', this.onKeyUp);
-            window.addEventListener('keydown', this.onKeyDown);
-            window.addEventListener('mousedown', this.onMouseDown);
-        }
-    }
-
-
-
-    private onKeyDown = (e: KeyboardEvent): void => {
+    protected override onKeyDown(e: KeyboardEvent): void {
+        super.onKeyDown(e);
         switch (e.key) {
             case 'Escape':
                 this.onEscape();
                 break;
             case 'Enter':
                 this.onEnter(e);
-                break;
-            case 'ArrowUp': case 'ArrowDown':
-                this.onArrowKey(e, e.key === 'ArrowUp' ? ArrowKeyType.Up : ArrowKeyType.Down);
                 break;
             case 'Shift': case 'Control':
                 e.key == 'Shift' ? this.shiftKeyDown = true : this.ctrlKeyDown = true;
@@ -97,7 +70,18 @@ export class EditableList {
 
 
 
-    private onKeyUp = (e: KeyboardEvent): void => {
+    private onMouseDown(): void {
+        if (this.stopMouseDownPropagation) {
+            this.stopMouseDownPropagation = false;
+            return
+        }
+        const editableListItem = this.editableListItemComponents.find(x => x.inEditMode);
+        editableListItem ? editableListItem.exitEditMode(this) : this.reinitializeList();
+    }
+
+
+
+    private onKeyUp(e: KeyboardEvent): void {
         switch (e.key) {
             case 'Shift': case 'Control':
                 e.key == 'Shift' ? this.shiftKeyDown = false : this.ctrlKeyDown = false;
@@ -107,19 +91,8 @@ export class EditableList {
 
 
 
-    private onMouseDown = (): void => {
-        if (this.stopMouseDownPropagation) {
-            this.stopMouseDownPropagation = false;
-            return
-        }
-        const editableListItem = this.listItemComponents.find(x => x.inEditMode);
-        editableListItem ? editableListItem.exitEditMode(this) : this.reinitializeList();
-    }
-
-
-
     private onEscape(): void {
-        const editableListItem = this.listItemComponents.find(x => x.inEditMode);
+        const editableListItem = this.editableListItemComponents.find(x => x.inEditMode);
         editableListItem ? editableListItem.exitEditMode(this, ExitEditType.Escape) : this.reinitializeList();
     }
 
@@ -127,32 +100,29 @@ export class EditableList {
 
     private onEnter(e: KeyboardEvent): void {
         e.preventDefault();
-        const editableListItem = this.listItemComponents.find(x => x.inEditMode);
+        const editableListItem = this.editableListItemComponents.find(x => x.inEditMode);
         if (editableListItem) editableListItem.exitEditMode(this, ExitEditType.Enter);
     }
 
 
 
-    private onArrowKey(e: KeyboardEvent, arrowKeyType: ArrowKeyType): void {
-        e.preventDefault();
-        const currentListItem = this.listItemComponents.find(x => x.inEditMode || x.hasPrimarySelection || x.hasUnselection);
-        if (currentListItem) currentListItem.onArrowKey(this, arrowKeyType);
-    }
-
-
-
     private emitPressedDeleteKey(): void {
-        if (this.listItemComponents.find(x => x.inEditMode)) return;
-        const listItemsToBeDeleted = this.listItemComponents.filter(x => x.hasSecondarySelection).map(x => new ListItem(x.listItem.id, x.listItem.text));
+        if (this.editableListItemComponents.find(x => x.inEditMode)) return;
+        const listItemsToBeDeleted = this.editableListItemComponents.filter(x => x.hasSecondarySelection).map(x => new ListItem(x.listItem.id, x.listItem.text));
         if (listItemsToBeDeleted.length > 0) this.deleteKeyPressedEvent.emit(listItemsToBeDeleted);
     }
 
 
 
-    private setSelectedItems(listItem: EditableListItemComponent): void {
-        this.addEventListeners();
-        listItem.htmlElement.nativeElement.focus();
+    protected override onArrowKey(e: KeyboardEvent, arrowKeyType: ArrowKeyType): void {
+        e.preventDefault();
+        const currentListItem = this.editableListItemComponents.find(x => x.inEditMode || x.hasPrimarySelection || x.hasUnselection);
+        if (currentListItem) currentListItem.onArrowKey(this, arrowKeyType);
+    }
 
+
+
+    protected override setSelectedItems(listItem: EditableListItemComponent): void {
         if (this.shiftKeyDown) {
             this.onItemSelectionUsingShiftKey(listItem);
         } else if (this.ctrlKeyDown) {
@@ -165,65 +135,71 @@ export class EditableList {
 
 
 
-    private onItemSelectionUsingShiftKey(listItemComponent: EditableListItemComponent) {
-        this.listItemComponents.forEach(x => {
+    private onItemSelectionUsingShiftKey(editableListItemComponent: EditableListItemComponent) {
+        let selectedItems: Array<ListItem> = new Array<ListItem>();
+
+        this.editableListItemComponents.forEach(x => {
             x.hasUnselection = false;
             x.hasPrimarySelection = false;
             x.hasSecondarySelection = false;
             x.secondarySelectionType = null;
         });
-        const selectedListItemIndex = this.list.indexOf(listItemComponent.listItem);
-        const pivotListItem = this.listItemComponents.find(x => x.isPivot);
+        const selectedListItemIndex = this.list.indexOf(editableListItemComponent.listItem);
+        const pivotListItem = this.editableListItemComponents.find(x => x.isPivot);
         const indexOfPivotListItem = pivotListItem ? this.list.indexOf(pivotListItem.listItem) : -1;
         const start = Math.min(indexOfPivotListItem, selectedListItemIndex);
         const end = Math.max(indexOfPivotListItem, selectedListItemIndex);
 
         for (let i = start; i <= end; i++) {
-            const itemComponent = this.listItemComponents.get(i);
+            selectedItems.push(this.list[i]);
+            const itemComponent = this.editableListItemComponents.get(i);
             if (itemComponent !== undefined) itemComponent.hasSecondarySelection = true;
         }
-        listItemComponent.hasPrimarySelection = true;
+        this.selectedItemsEvent.emit(selectedItems);
+        editableListItemComponent.hasPrimarySelection = true;
     }
 
 
 
-    private onItemSelectionUsingCtrlKey(listItemComponent: EditableListItemComponent) {
-        this.listItemComponents.forEach(x => {
+    private onItemSelectionUsingCtrlKey(editableListItemComponent: EditableListItemComponent) {
+        this.editableListItemComponents.forEach(x => {
             x.isPivot = false;
             x.hasUnselection = false;
             x.hasPrimarySelection = false;
             x.secondarySelectionType = null;
         });
-        listItemComponent.isPivot = true;
-        listItemComponent.hasUnselection = listItemComponent.hasSecondarySelection;
-        listItemComponent.hasPrimarySelection = !listItemComponent.hasSecondarySelection;
-        listItemComponent.hasSecondarySelection = !listItemComponent.hasUnselection;
+        editableListItemComponent.isPivot = true;
+        editableListItemComponent.hasUnselection = editableListItemComponent.hasSecondarySelection;
+        editableListItemComponent.hasPrimarySelection = !editableListItemComponent.hasSecondarySelection;
+        editableListItemComponent.hasSecondarySelection = !editableListItemComponent.hasUnselection;
+        this.selectedItemsEvent.emit([editableListItemComponent.listItem]);
     }
 
 
 
-    private onItemSelectionUsingNoModifierKey(listItemComponent: EditableListItemComponent): void {
+    private onItemSelectionUsingNoModifierKey(editableListItemComponent: EditableListItemComponent): void {
         this.resetListItemProperties();
-        listItemComponent.isPivot = true;
-        listItemComponent.hasPrimarySelection = true;
-        listItemComponent.hasSecondarySelection = true;
+        editableListItemComponent.isPivot = true;
+        editableListItemComponent.hasPrimarySelection = true;
+        editableListItemComponent.hasSecondarySelection = true;
+        this.selectedItemsEvent.emit([editableListItemComponent.listItem]);
     }
 
 
 
     private setSecondarySelectionType(): void {
         if (length !== 1) {
-            const length = this.listItemComponents.length;
-            const firstListItem = this.listItemComponents.first;
-            const secondListItem = this.listItemComponents.get(1);
-            const lastListItem = this.listItemComponents.last;
-            const secondToLastListItem = this.listItemComponents.get(length - 2);
+            const length = this.editableListItemComponents.length;
+            const firstListItem = this.editableListItemComponents.first;
+            const secondListItem = this.editableListItemComponents.get(1);
+            const lastListItem = this.editableListItemComponents.last;
+            const secondToLastListItem = this.editableListItemComponents.get(length - 2);
 
             if (secondListItem) firstListItem.setFirstListItemSecondarySelectionType(secondListItem);
             for (let i = 1; i < length - 1; i++) {
-                const currentListItem = this.listItemComponents.get(i);
-                const prevListItem = this.listItemComponents.get(i - 1);
-                const nextListItem = this.listItemComponents.get(i + 1);
+                const currentListItem = this.editableListItemComponents.get(i);
+                const prevListItem = this.editableListItemComponents.get(i - 1);
+                const nextListItem = this.editableListItemComponents.get(i + 1);
                 if (prevListItem && currentListItem && nextListItem) currentListItem.setMiddleListItemSecondarySelectionType(prevListItem, nextListItem);
             }
             if (secondToLastListItem) lastListItem.setLastListItemSecondarySelectionType(secondToLastListItem);
@@ -248,21 +224,21 @@ export class EditableList {
 
 
     private autoselectMultipleListItems(): void {
-        let listItemComponent: EditableListItemComponent | undefined;
+        let editableListItemComponent: EditableListItemComponent | undefined;
 
         window.setTimeout(() => {
             this.list.forEach((item, index) => {
                 const isNewListItem = !this.idsOfCurrentListItems.includes(item.id);
-                const currentListItemComponent = this.listItemComponents.get(index);
+                const currentListItemComponent = this.editableListItemComponents.get(index);
 
                 if (isNewListItem && currentListItemComponent) {
-                    listItemComponent = currentListItemComponent;
-                    listItemComponent!.hasSecondarySelection = true;
+                    editableListItemComponent = currentListItemComponent;
+                    editableListItemComponent!.hasSecondarySelection = true;
                 }
             });
             this.setSecondarySelectionType();
-            if (listItemComponent) listItemComponent.hasPrimarySelection = true;
-            this.listItemComponents.forEach(component => (component.isDisabled = false));
+            if (editableListItemComponent) editableListItemComponent.hasPrimarySelection = true;
+            this.editableListItemComponents.forEach(component => (component.isDisabled = false));
         });
     }
 
@@ -288,15 +264,15 @@ export class EditableList {
 
     private autoselectListItemByIndex(index: number): void {
         window.setTimeout(() => {
-            const listItemComponent = this.listItemComponents.get(index);
-            if (listItemComponent) listItemComponent.reselectItem(this);
+            const editableListItemComponent = this.editableListItemComponents.get(index);
+            if (editableListItemComponent) editableListItemComponent.reselectItem(this);
         });
     }
 
 
 
     private resetListItemProperties(): void {
-        this.listItemComponents.forEach(x => {
+        this.editableListItemComponents.forEach(x => {
             x.isPivot = false;
             x.isDisabled = false;
             x.inEditMode = false;
@@ -309,12 +285,16 @@ export class EditableList {
 
 
 
-    public selectListItem(listItem: ListItem): void {
-        const editableListItem = this.listItemComponents.find(x => x.inEditMode);
+    public override selectListItem(listItem: ListItem): void {
+        const editableListItem = this.editableListItemComponents.find(x => x.inEditMode);
         if (editableListItem) editableListItem.exitEditMode(this);
 
-        const listItemComponent = this.listItemComponents.find(x => x.listItem.id == listItem.id);
-        if (listItemComponent) this.setSelectedItems(listItemComponent);
+        const listItemComponent = this.editableListItemComponents.find(x => x.listItem.id == listItem.id);
+        if (listItemComponent) {
+            this.addEventListeners();
+            listItemComponent.htmlElement.nativeElement.focus();
+            this.setSelectedItems(listItemComponent);
+        }
     }
 
 
@@ -328,14 +308,14 @@ export class EditableList {
         this.list.length == 0 ? this.idsOfCurrentListItems.push(0) : this.list.forEach(x => this.idsOfCurrentListItems.push(x.id));
         this.list.unshift(new ListItem('', ''));
         window.setTimeout(() => {
-            this.listItemComponents.first.identify(this);
+            this.editableListItemComponents.first.identify(this);
         })
     }
 
 
 
     public editListItem(): void {
-        const listItem = this.listItemComponents.find(x => x.hasPrimarySelection);
+        const listItem = this.editableListItemComponents.find(x => x.hasPrimarySelection);
         if (!listItem) return;
         this.idsOfCurrentListItems = [];
         this.idOfEditedListItem = listItem.listItem.id;
@@ -345,12 +325,12 @@ export class EditableList {
 
 
     public deleteListItems(): void {
-        if (this.listItemComponents.find(x => x.inEditMode)) return;
-        const selectedListItems = this.listItemComponents.filter(x => x.hasSecondarySelection);
+        if (this.editableListItemComponents.find(x => x.inEditMode)) return;
+        const selectedListItems = this.editableListItemComponents.filter(x => x.hasSecondarySelection);
         if (selectedListItems.length == 0) return;
 
-        const indexOfPrimarySelectedListItem = this.listItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
-        const nextListComponent = indexOfPrimarySelectedListItem != -1 ? this.listItemComponents.toArray().slice(indexOfPrimarySelectedListItem + 1).find(x => !x.hasSecondarySelection) : null;
+        const indexOfPrimarySelectedListItem = this.editableListItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
+        const nextListComponent = indexOfPrimarySelectedListItem != -1 ? this.editableListItemComponents.toArray().slice(indexOfPrimarySelectedListItem + 1).find(x => !x.hasSecondarySelection) : null;
         this.idOfNextSelectedListItemAfterDelete = nextListComponent ? this.list.find(x => x.id == nextListComponent.listItem.id)?.id : null;
 
         const idsOfListItemsToBeDeleted = selectedListItems.map(x => x.listItem.id);
@@ -360,7 +340,7 @@ export class EditableList {
 
 
     public getListItemsToBeDeleted(): void {
-        const listItemsToBeDeleted = this.listItemComponents.filter(x => x.hasSecondarySelection).map(x => new ListItem(x.listItem.id, x.listItem.text));
+        const listItemsToBeDeleted = this.editableListItemComponents.filter(x => x.hasSecondarySelection).map(x => new ListItem(x.listItem.id, x.listItem.text));
         this.listItemsToBeDeletedEvent.emit(listItemsToBeDeleted);
     }
 
@@ -379,10 +359,10 @@ export class EditableList {
 
 
     public reinitializeList(): void {
+        this.removeKeyupListener();
+        this.removeKeydownListener();
+        this.removeMousedownListener();
         this.resetListItemProperties();
         this.eventListenersAdded = false;
-        window.removeEventListener('keyup', this.onKeyUp);
-        window.removeEventListener('keydown', this.onKeyDown);
-        window.removeEventListener('mousedown', this.onMouseDown);
     }
 }
