@@ -118,15 +118,17 @@ export class EditableListItemComponent extends ListItemComponent {
 
   public setMiddleListItemSecondarySelectionType(prevListItem: EditableListItemComponent, nextListItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
-        if (!prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
-            this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Bottom : nextListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
-        } else if (!prevListItem.hasSecondarySelection || !nextListItem.hasSecondarySelection) {
-            this.secondarySelectionType = prevListItem.hasSecondarySelection ? SecondarySelectionType.Top : SecondarySelectionType.Bottom;
-        } else {
-            this.secondarySelectionType = SecondarySelectionType.Middle;
-        }
+      if (!prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
+        this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Top;
+      } else if (prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
+        this.secondarySelectionType = nextListItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Bottom;
+      } else if (!prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
+        this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Bottom : nextListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
+      } else if (prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
+        this.secondarySelectionType = SecondarySelectionType.Middle;
+      }
     }
-}
+  }
 
 
 

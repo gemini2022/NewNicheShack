@@ -4,11 +4,12 @@ import { Component, ViewChild, inject } from '@angular/core';
 import { EditableListComponent } from './editable-list/editable-list.component';
 import { DataService } from './services/data.service';
 import { ListComponent } from './list/list.component';
+import { CheckboxComponent } from './checkbox/checkbox.component';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent, EditableListComponent],
+  imports: [CommonModule, ListComponent, EditableListComponent, CheckboxComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

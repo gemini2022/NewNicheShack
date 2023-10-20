@@ -1,0 +1,105 @@
+.checkbox-container {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: $checkbox-container-height;
+    padding-left: $checkbox-container-padding-left;
+    padding-right: $checkbox-container-padding-right;
+    user-select: none;
+    align-items: center;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+
+    &:hover:not(.checkbox-disabled) {
+        cursor: pointer;
+        background: $checkbox-hover-background-color;
+
+        .checkbox {
+            border-color: $checkbox-border-hover-color;
+            background-color: $checkbox-background-hover-color;
+
+            // Checkmark
+            &:after {
+                border: solid $checkbox-checkmark-hover-color;
+                border-width: 0 3px 3px 0;
+                transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+            }
+        }
+
+        .checkbox-label {
+            color: $checkbox-label-hover-color;
+        }
+    }
+
+
+    & input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+
+        &:checked~.checkbox {
+            border-color: $checkbox-border-checked-color;
+            background-color: $checkbox-background-checked-color;
+
+            // Checkmark
+            &:after {
+                display: block;
+            }
+        }
+    }
+}
+
+
+.checkbox {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    margin-left: 0;
+    margin-right: $checkbox-side-margin;
+    border: $checkbox-border-width solid $checkbox-border-color;
+    background-color: $checkbox-background-color;
+    border-radius: $checkbox-border-radius;
+
+    &:focus-visible {
+        outline-offset: 2px;
+        outline: 1px solid $checkbox-focus-outline-color;
+    }
+
+    // Checkmark
+    &:after {
+        content: "";
+        position: absolute;
+        display: none;
+        left: 4px;
+        top: -3px;
+        width: 5px;
+        height: 10px;
+        border: solid $checkbox-checkmark-color;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+}
+
+
+.checkbox-label {
+    color: $checkbox-label-color;
+    font-size: $checkbox-label-font-size;
+    font-family: $checkbox-label-font-family;
+}
+
+
+.checkbox-label-left {
+    margin-right: 0;
+    margin-left: $checkbox-side-margin;
+}
+
+.checkbox-disabled {
+    opacity: $checkbox-disabled-opacity;
+}

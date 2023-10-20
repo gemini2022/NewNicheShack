@@ -1,0 +1,44 @@
+// List
+$list-indent: 5px;
+$list-font-size: 14px;
+$list-cursor: auto;
+$list-item-height: 26px;
+$list-selection-border-width: 1px;
+$list-text-color: #a0a0a0;
+$list-hover-color: rgba(255, 186, 0, 0.03);
+$list-font-family: Arial, Helvetica, sans-serif;
+$list-hover-text-color: #d2d2d2;
+$list-selection-text-color: #ffffff;
+$list-selection-fill-color: rgba(255, 186, 0, 0.1);
+$list-selection-border-color: rgba(255, 186, 0, 0.85);
+
+// Editable List
+$list-disabled-opacity: 0.25;
+$list-secondary-selection-border-width: 1px;
+$list-edited-item-text-color: #dcdcdc;
+$list-secondary-selection-text-color: #d2d2d2;
+$list-secondary-selection-fill-color: rgba(255, 186, 0, 0.05);
+$list-secondary-selection-border-color: rgba(255, 186, 0, 0.25);
+
+// Checkbox
+$checkbox-label-font-size: 14px;
+$checkbox-container-height: 15px;
+$checkbox-disabled-opacity: 0.25;
+$checkbox-side-margin: 5px;
+$checkbox-border-width: 1px;
+$checkbox-border-radius: 2px;
+$checkbox-container-padding-left: 0;
+$checkbox-container-padding-right: 0;
+$checkbox-label-color: #a0a0a0;
+$checkbox-checkmark-color: #ffba00;
+$checkbox-label-hover-color: #d2d2d2;
+$checkbox-border-color: #505050;
+$checkbox-label-font-family: Arial, Helvetica, sans-serif;
+$checkbox-checkmark-hover-color: #ffd666;
+$checkbox-background-color: #282828;
+$checkbox-hover-background-color: rgba(255, 255, 255, 0.03);
+$checkbox-border-hover-color: #828282;
+$checkbox-focus-outline-color: #808080;
+$checkbox-background-hover-color: #3c3c3c;
+$checkbox-border-checked-color: #646464;
+$checkbox-background-checked-color: #3c3c3c;

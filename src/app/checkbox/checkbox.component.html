@@ -1,0 +1,21 @@
+<div class="checkbox-container"
+     (click)="onCheckboxChange()"
+     [ngClass]="{'checkbox-disabled': isDisabled}"
+     [ngStyle]="{'justify-content': spaceBetween ? 'space-between' : 'flex-start'}">
+       
+    <input tabindex="-1"
+           type="checkbox"
+           [checked]="isChecked"
+           [disabled]="isDisabled">
+
+    <div *ngIf="label && !labelRight" class="checkbox-label">{{label}}</div>
+
+    <div #tabElement
+         [tabindex]="0"
+         class="checkbox"
+         [ngClass]="{'checkbox-label-left': !labelRight}"
+         (keydown.space)="$event.preventDefault(); onCheckboxChange()">
+    </div>
+
+    <div *ngIf="label && labelRight" class="checkbox-label">{{label}}</div>
+</div>

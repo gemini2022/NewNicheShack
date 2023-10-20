@@ -11,11 +11,11 @@
      [ngClass]="{'edited-list-item': this.inEditMode,
                  'disabled-list-item': this.isDisabled,
                  'unselected-list-item': this.hasUnselection,
-                 'primary-selection': this.hasPrimarySelection && this.hasSecondarySelection,
-                 'secondary-selection-all': this.secondarySelectionType == SecondarySelectionType.All,
-                 'secondary-selection-top': this.secondarySelectionType == SecondarySelectionType.Top,
-                 'primary-selection-border-only': this.hasPrimarySelection && !this.hasSecondarySelection,
-                 'secondary-selection-middle': this.secondarySelectionType == SecondarySelectionType.Middle,
-                 'secondary-selection-bottom': this.secondarySelectionType == SecondarySelectionType.Bottom}"
+                 'list-primary-selection': this.hasPrimarySelection && this.hasSecondarySelection,
+                 'list-secondary-selection-all': this.secondarySelectionType == SecondarySelectionType.All,
+                 'list-secondary-selection-top': this.secondarySelectionType == SecondarySelectionType.Top,
+                 'list-primary-selection-border-only': this.hasPrimarySelection && !this.hasSecondarySelection,
+                 'list-secondary-selection-middle': this.secondarySelectionType == SecondarySelectionType.Middle,
+                 'list-secondary-selection-bottom': this.secondarySelectionType == SecondarySelectionType.Bottom}"
      (mousedown)="onListItemDown($event); this.getTextCaretPosition()"
      [ngStyle]="{'display': this.listPasted ? 'block' : null, 'height': this.listPasted ? 'fit-content' : null}">{{listItem.text}}</div>
