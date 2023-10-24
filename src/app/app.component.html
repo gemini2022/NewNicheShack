@@ -1,7 +1,7 @@
 <div style="display: flex; margin: 15px 0 30px 5px;">
   <button style="margin-right: 20px;" (click)="onAddListItem()" (mousedown)="listComponent.stopMouseDownPropagation = true">Add List Item</button>
   <button style="margin-right: 20px;" (click)="onEditListItem()" (mousedown)="listComponent.stopMouseDownPropagation = true">Edit List Item</button>
-  <button style="margin-right: 20px;" (click)="listComponent.getListItemsToBeDeleted()" (mousedown)="listComponent.stopMouseDownPropagation = true">Delete List Item</button>
+  <button style="margin-right: 20px; user-select: none;" (click)="listComponent.getListItemsToBeDeleted()" (mousedown)="listComponent.stopMouseDownPropagation = true">Delete List Item</button>
 </div>
 
 
@@ -13,12 +13,14 @@
       
       <!-- <ns-list #list
                [list]="testList"
+               [noSelectOnArrowKey]="true"
                (loadListEvent)="onLoadList()"
                (selectedItemsEvent)="onSelectedItems($event)">
       </ns-list> -->
 
       <ns-editable-list #list
                [list]="testList"
+               [noSelectOnArrowKey]="true"
                (loadListEvent)="onLoadList()"
                (addedListItemEvent)="onListItemAdded($event)"
                (selectedItemsEvent)="onSelectedItems($event)"

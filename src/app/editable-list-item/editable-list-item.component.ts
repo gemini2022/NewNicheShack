@@ -23,34 +23,31 @@ export class EditableListItemComponent extends ListItemComponent {
   public inEditMode: boolean = false;
   public listPasted: boolean = false;
   public hasUnselection: boolean = false;
-  public hasSecondarySelection: boolean = false;
-  public SecondarySelectionType = SecondarySelectionType;
-  public secondarySelectionType: SecondarySelectionType | undefined | null;
 
   // Output
   @Output() public onInput: EventEmitter<string> = new EventEmitter();
   @Output() public onDoubleClick: EventEmitter<void> = new EventEmitter();
+  @Output() public reinitializeList: EventEmitter<void> = new EventEmitter();
+  @Output() public addedListItemEvent: EventEmitter<string> = new EventEmitter();
+  @Output() public editedListItemEvent: EventEmitter<ListItem> = new EventEmitter();
+  @Output() public stopMouseDownPropagation: EventEmitter<void> = new EventEmitter();
+  @Output() public disableEnableListItems: EventEmitter<boolean> = new EventEmitter();
+  @Output() public removeNewListItemFromList: EventEmitter<void> = new EventEmitter();
+  @Output() public pastedListItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
 
 
-
-  public identify(editableList: EditableList) {
+  public identify() {
     this.isNew = this.inEditMode = this.hasSecondarySelection = true;
-    window.setTimeout(() => this.htmlElement.nativeElement.focus());
-
-    editableList.editableListItemComponents.forEach(x => {
-      if (!x.inEditMode) x.isDisabled = true;
-    });
+    setTimeout(() => this.htmlElement.nativeElement.focus());
+    this.disableEnableListItems.emit(true);
   }
 
 
 
-  public setToEditMode(editableList: EditableList) {
+  public setToEditMode() {
     this.inEditMode = true;
     this.hasPrimarySelection = false;
-
-    for (const listItem of editableList.editableListItemComponents) {
-      if (!listItem.inEditMode) listItem.isDisabled = true;
-    }
+    this.disableEnableListItems.emit(true);
     this.selectRange();
     this.textCaretPosition = window.getSelection()!;
   }
@@ -67,43 +64,54 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
 
-  public exitEditMode(editableList: EditableList, exitEditType?: ExitEditType) {
+  public exitEditMode(exitEditType?: ExitEditType) {
     if (this.htmlElement!.nativeElement.innerText.trim().length > 0) {
-      exitEditType === ExitEditType.Escape ? this.cancelListItemEdit(editableList) : this.completeListItemEdit(editableList);
-    } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit(editableList);
+      exitEditType === ExitEditType.Escape ? this.cancelListItemEdit() : this.completeListItemEdit();
+    } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit();
   }
 
 
 
-  private cancelListItemEdit(editableList: EditableList): void {
+  private cancelListItemEdit(): void {
     if (this.isNew) {
-      editableList.list.shift();
-      editableList.reinitializeList();
+      this.removeNewListItemFromList.emit();
+      this.reinitializeList.emit();
     } else {
-      this.htmlElement!.nativeElement.innerText = this.listItem.text.trim();
-      this.reselectItem(editableList);
+      const text = this.htmlElement.nativeElement.innerText.trim();
+      this.htmlElement!.nativeElement.innerText = '';
+
+      setTimeout(() => {
+        this.htmlElement!.nativeElement.innerText = text;
+        this.reselectItem();
+      });
     }
   }
 
 
 
-  private completeListItemEdit(editableList: EditableList): void {
-    if (this.isNew) {
-      this.listPasted ? editableList.pastedListItemsEvent.emit(this.htmlElement.nativeElement.innerText.split('\n')) : editableList.addedListItemEvent.emit(this.htmlElement.nativeElement.innerText);
-    } else {
-      editableList.editedListItemEvent.emit(new ListItem(this.listItem.id, this.htmlElement.nativeElement.innerText));
-    }
+  private completeListItemEdit(): void {
+    const text = this.htmlElement.nativeElement.innerText.trim();
+    this.htmlElement!.nativeElement.innerText = '';
+
+    setTimeout(() => {
+      this.htmlElement!.nativeElement.innerText = text;
+      if (this.isNew) {
+        this.listPasted ? this.pastedListItemsEvent.emit(this.htmlElement.nativeElement.innerText.split('\n')) : this.addedListItemEvent.emit(this.htmlElement.nativeElement.innerText);
+      } else {
+        this.editedListItemEvent.emit(new ListItem(this.listItem.id, this.htmlElement.nativeElement.innerText));
+      }
+    });
   }
 
 
 
-  public reselectItem(editableList: EditableList): void {
+  public reselectItem(): void {
     this.isNew = false;
     this.inEditMode = false;
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
     this.htmlElement!.nativeElement.focus();
-    editableList.editableListItemComponents.forEach(x => x.isDisabled = false);
+    this.disableEnableListItems.emit(false);
   }
 
 
@@ -140,15 +148,8 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
 
-  public override onArrowKey(editableList: EditableList, arrowKeyType: ArrowKeyType): void {
-    if (this.inEditMode) return;
-    super.onArrowKey(editableList, arrowKeyType);
-  }
-
-
-
   public getTextCaretPosition(): void {
-    if (this.inEditMode) window.setTimeout(() => {
+    if (this.inEditMode) setTimeout(() => {
       this.textCaretPosition = window.getSelection()!
     });
   }
@@ -208,6 +209,7 @@ export class EditableListItemComponent extends ListItemComponent {
 
   public override onListItemDown(e: MouseEvent) {
     const rightMouseButton = 2;
+    this.stopMouseDownPropagation.emit();
 
     // As long as this list item is (NOT) currently in edited mode
     if (!this.inEditMode) {

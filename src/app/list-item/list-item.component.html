@@ -2,5 +2,7 @@
      tabindex="-1"
      class="list-item"
      (contextmenu)="$event.preventDefault()"
-     [ngClass]="{'list-primary-selection': this.hasPrimarySelection}"
+     [ngClass]="{'list-primary-selection': this.hasPrimarySelection && this.hasSecondarySelection,
+                 'list-secondary-selection-all': this.secondarySelectionType == SecondarySelectionType.All,
+                 'list-primary-selection-border-only': this.hasPrimarySelection && !this.hasSecondarySelection}"
      (mousedown)="onListItemDown($event)">{{listItem.text}}</div>

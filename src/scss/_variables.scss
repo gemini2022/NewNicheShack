@@ -1,24 +1,26 @@
 // List
 $list-indent: 5px;
-$list-font-size: 14px;
 $list-cursor: auto;
+$list-font-size: 14px;
 $list-item-height: 26px;
-$list-selection-border-width: 1px;
 $list-text-color: #a0a0a0;
+$list-selection-border-width: 1px;
+$list-hover-text-color: #d2d2d2;
+$list-item-padding-top-bottom: 3px;
+$list-selection-text-color: white;
 $list-hover-color: rgba(255, 186, 0, 0.03);
 $list-font-family: Arial, Helvetica, sans-serif;
-$list-hover-text-color: #d2d2d2;
-$list-selection-text-color: #ffffff;
-$list-selection-fill-color: rgba(255, 186, 0, 0.1);
 $list-selection-border-color: rgba(255, 186, 0, 0.85);
+$list-selection-background-color: rgba(255, 186, 0, 0.1);
 
 // Editable List
 $list-disabled-opacity: 0.25;
-$list-secondary-selection-border-width: 1px;
 $list-edited-item-text-color: #dcdcdc;
+$list-edited-item-background-color: #2b2b2b;
 $list-secondary-selection-text-color: #d2d2d2;
-$list-secondary-selection-fill-color: rgba(255, 186, 0, 0.05);
+$list-edited-item-border-color: rgba(255, 186, 0, 0.25);
 $list-secondary-selection-border-color: rgba(255, 186, 0, 0.25);
+$list-secondary-selection-background-color: rgba(255, 186, 0, 0.05);
 
 // Checkbox
 $checkbox-label-font-size: 14px;

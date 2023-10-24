@@ -38,7 +38,7 @@ export class AppComponent {
 
 
   onSelectedItems(selectedItems: Array<ListItem>) {
-    // console.log(selectedItems);
+    console.log(selectedItems);
   }
 
 

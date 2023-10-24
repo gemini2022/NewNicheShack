@@ -5,6 +5,114 @@
 }
 
 
+
+.list-item {
+    outline: none;
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+    white-space: nowrap;
+    cursor: $list-cursor;
+    text-overflow: ellipsis;
+    color: $list-text-color;
+    height: $list-item-height;
+    font-size: $list-font-size;
+    font-family: $list-font-family;
+    border: $list-selection-border-width solid transparent;
+    line-height: $list-item-height - (($list-item-padding-top-bottom * 2) + ($list-selection-border-width * 2));
+    padding: $list-item-padding-top-bottom 0 $list-item-padding-top-bottom $list-indent - $list-selection-border-width;
+
+    &:hover:not(.edited-list-item):not(.unselected-list-item):not(.list-primary-selection):not(.list-secondary-selection-all):not(.list-secondary-selection-top):not(.list-secondary-selection-middle):not(.list-secondary-selection-bottom):not(.list-primary-selection-border):not(.disabled-list-item) {
+        color: $list-hover-text-color;
+        background: $list-hover-color;
+    }
+}
+
+
+
+.list-primary-selection {
+    color: $list-selection-text-color;
+    border-color: $list-selection-border-color;
+    background: $list-selection-background-color;
+}
+
+
+
+.list-primary-selection-border-only {
+    color: $list-selection-text-color;;
+    border-color: $list-selection-border-color;
+}
+
+
+
+.unselected-list-item {
+    color: $list-text-color;
+    border-color: $list-selection-border-color;
+
+    &:hover {
+        color: $list-hover-text-color;
+        background: $list-hover-color;
+    }
+}
+
+
+
+.list-secondary-selection-top:not(.list-primary-selection) {
+    border-bottom: hidden;
+    color: $list-secondary-selection-text-color;
+    border-color: $list-secondary-selection-border-color;
+    background: $list-secondary-selection-background-color;
+    padding-bottom: $list-selection-border-width + $list-item-padding-top-bottom;
+}
+
+
+
+.list-secondary-selection-middle:not(.list-primary-selection) {
+    border-top: hidden;
+    border-bottom: hidden;
+    color: $list-secondary-selection-text-color;
+    border-color: $list-secondary-selection-border-color;
+    background: $list-secondary-selection-background-color;
+    padding-top: $list-selection-border-width + $list-item-padding-top-bottom;
+    padding-bottom: $list-selection-border-width + $list-item-padding-top-bottom;
+}
+
+
+
+.list-secondary-selection-bottom:not(.list-primary-selection) {
+    border-top: hidden;
+    color: $list-secondary-selection-text-color;
+    border-color: $list-secondary-selection-border-color;
+    background: $list-secondary-selection-background-color;
+    padding-top: $list-selection-border-width + $list-item-padding-top-bottom;
+}
+
+
+
+.list-secondary-selection-all:not(.list-primary-selection) {
+    color: $list-secondary-selection-text-color;
+    border-color: $list-secondary-selection-border-color;
+    background: $list-secondary-selection-background-color;
+}
+
+
+
+.edited-list-item {
+    outline: none;
+    text-overflow: unset;
+    color: $list-edited-item-text-color;
+    border-color: $list-edited-item-border-color;
+    background: $list-edited-item-background-color;
+}
+
+
+
+.disabled-list-item {
+    opacity: $list-disabled-opacity;
+}
+
+
+
 .list-spinner {
     top: 0;
     left: 0;
@@ -20,121 +128,11 @@
 }
 
 
+
 .pasted-list-item {
-    height: 26px;
     display: flex;
     overflow: hidden;
     align-items: center;
     white-space: nowrap;
-}
-
-
-
-
-
-
-
-.list-item {
-    position: relative;
-    height: 26px;
-    outline: none;
-    overflow: hidden;
-    padding-top: 4px;
-    color: #a0a0a0;
-    user-select: none;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    border: 1px solid transparent;
-
-    &:hover:not(.edited-list-item):not(.unselected-list-item):not(.list-primary-selection):not(.list-secondary-selection-all):not(.list-secondary-selection-top):not(.list-secondary-selection-middle):not(.list-secondary-selection-bottom):not(.list-primary-selection-border):not(.disabled-list-item) {
-        color: #d2d2d2;
-        background: #ffbb0008;
-    }
-}
-
-
-
-
-
-
-.list-primary-selection {
-    color: white;
-    background: #ffba001a;
-    border-color: #ffba00d9;
-}
-
-
-.list-primary-selection-border-only {
-    color: white;
-    border-color: #ffba00d9;
-}
-
-
-
-.unselected-list-item {
-    color: #a0a0a0;
-    border-color: #ffba00d9;
-
-    &:hover {
-        color: #d2d2d2;
-        background: #ffba0008;
-    }
-}
-
-
-
-.list-secondary-selection-top:not(.list-primary-selection) {
-    border-bottom: hidden;
-    color: #d2d2d2;
-    background: #ffba000d;
-    border-color: #ffba0040;
-    padding-bottom: 1px;
-}
-
-
-
-.list-secondary-selection-middle:not(.list-primary-selection) {
-    border-top: hidden;
-    border-bottom: hidden;
-    color: #d2d2d2;
-    background: #ffba000d;
-    padding-top: 5px;
-    border-color: #ffba0040;
-    padding-bottom: 1px;
-}
-
-
-
-.list-secondary-selection-bottom:not(.list-primary-selection) {
-    border-top: hidden;
-    color: #d2d2d2;
-    background: #ffba000d;
-    padding-top: 5px;
-    border-color: #ffba0040;
-}
-
-
-
-
-.list-secondary-selection-all:not(.list-primary-selection) {
-    color: #d2d2d2;
-    background: #ffba000d;
-    border-color: #ffba0040;
-}
-
-
-
-.edited-list-item {
-    outline: none;
-    color: #dcdcdc;
-    // border-right: none;
-    text-overflow: unset;
-    background: #2b2b2b;
-    border-color: #ffba0040;
-}
-
-
-
-.disabled-list-item {
-    opacity: 0.2;
+    height: $list-item-height;
 }
