@@ -9,7 +9,7 @@
      [contentEditable]="this.inEditMode == true"
      (input)="onInput.emit(htmlElement.innerText)"
      [ngClass]="{'edited-list-item': this.inEditMode,
-                 'disabled-list-item': this.isDisabled,
+                 'disabled-list-item': !this.isEnabled,
                  'unselected-list-item': this.hasUnselection,
                  'list-primary-selection': this.hasPrimarySelection && this.hasSecondarySelection,
                  'list-secondary-selection-all': this.secondarySelectionType == SecondarySelectionType.All,

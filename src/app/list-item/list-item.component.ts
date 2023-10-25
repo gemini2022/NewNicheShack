@@ -33,4 +33,12 @@ export class ListItemComponent {
   public onListItemDown(e: MouseEvent) {
     this.onMouseDown.emit(this.listItem);
   }
+
+
+
+  public initialize(primarySelectedListItemIsBorderOnly?: boolean) {
+    this.hasPrimarySelection = false;
+    this.secondarySelectionType = null;
+    if (!primarySelectedListItemIsBorderOnly) this.hasSecondarySelection = false;
+  }
 }

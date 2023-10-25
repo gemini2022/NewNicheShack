@@ -1,9 +1,8 @@
 import { ListItem } from '../list-item';
 import { CommonModule } from '@angular/common';
-import { EditableList } from '../editable-list';
+import { ExitEditType, SecondarySelectionType } from '../enums';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ListItemComponent } from '../list-item/list-item.component';
-import { ArrowKeyType, ExitEditType, SecondarySelectionType } from '../enums';
 
 @Component({
   selector: 'ns-editable-list-item',
@@ -19,7 +18,7 @@ export class EditableListItemComponent extends ListItemComponent {
   // Public
   public isNew: boolean = false;
   public isPivot: boolean = false;
-  public isDisabled: boolean = false;
+  public isEnabled: boolean = true;
   public inEditMode: boolean = false;
   public listPasted: boolean = false;
   public hasUnselection: boolean = false;
@@ -31,15 +30,15 @@ export class EditableListItemComponent extends ListItemComponent {
   @Output() public addedListItemEvent: EventEmitter<string> = new EventEmitter();
   @Output() public editedListItemEvent: EventEmitter<ListItem> = new EventEmitter();
   @Output() public stopMouseDownPropagation: EventEmitter<void> = new EventEmitter();
-  @Output() public disableEnableListItems: EventEmitter<boolean> = new EventEmitter();
   @Output() public removeNewListItemFromList: EventEmitter<void> = new EventEmitter();
+  @Output() public setListItemsEnableState: EventEmitter<boolean> = new EventEmitter();
   @Output() public pastedListItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
 
 
   public identify() {
     this.isNew = this.inEditMode = this.hasSecondarySelection = true;
     setTimeout(() => this.htmlElement.nativeElement.focus());
-    this.disableEnableListItems.emit(true);
+    this.setListItemsEnableState.emit(false);
   }
 
 
@@ -47,7 +46,7 @@ export class EditableListItemComponent extends ListItemComponent {
   public setToEditMode() {
     this.inEditMode = true;
     this.hasPrimarySelection = false;
-    this.disableEnableListItems.emit(true);
+    this.setListItemsEnableState.emit(false);
     this.selectRange();
     this.textCaretPosition = window.getSelection()!;
   }
@@ -111,7 +110,7 @@ export class EditableListItemComponent extends ListItemComponent {
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
     this.htmlElement!.nativeElement.focus();
-    this.disableEnableListItems.emit(false);
+    this.setListItemsEnableState.emit(true);
   }
 
 
@@ -222,5 +221,21 @@ export class EditableListItemComponent extends ListItemComponent {
         super.onListItemDown(e);
       }
     }
+  }
+
+
+
+  public setEnableState(isEnabled: boolean) {
+    if (!this.inEditMode) this.isEnabled = isEnabled;
+  }
+
+
+
+  public override initialize(primarySelectedListItemIsBorderOnly?: boolean): void {
+    super.initialize(primarySelectedListItemIsBorderOnly);
+    this.isPivot = false;
+    this.isEnabled = true;
+    this.inEditMode = false;
+    this.hasUnselection = false;
   }
 }

@@ -1,5 +1,5 @@
 import { ListItem } from "./list-item";
-import { ArrowKeyType, SecondarySelectionType } from "./enums";
+import { SecondarySelectionType } from "./enums";
 import { ListItemComponent } from "./list-item/list-item.component";
 import { Directive, EventEmitter, Input, Output, QueryList, Renderer2, ViewChildren, inject } from "@angular/core";
 
@@ -15,6 +15,7 @@ export class List {
     public get loading(): boolean { return this._loading; }
 
     // Inputs
+    @Input() public loopSelection: boolean = true;
     @Input() public noSelectOnArrowKey: boolean = false;
     @Input() public list: Array<ListItem> = new Array<ListItem>();
 
@@ -65,10 +66,10 @@ export class List {
                 this.onEnter(e);
                 break;
             case 'ArrowUp':
-                this.onArrowKey(e, ArrowKeyType.Up);
+                this.onArrowKey(e, -1);
                 break;
             case 'ArrowDown':
-                this.onArrowKey(e, ArrowKeyType.Down);
+                this.onArrowKey(e, 1);
                 break;
         }
     }
@@ -86,31 +87,29 @@ export class List {
 
 
 
-    protected onArrowKey(e: KeyboardEvent, arrowKeyType: ArrowKeyType): void {
+    protected onArrowKey(e: KeyboardEvent, direction: number): void {
         e.preventDefault();
         const currentListItem = this.listItemComponents.find(x => x.hasPrimarySelection);
-        if (currentListItem) this.selectItemOnArrowKey(currentListItem, arrowKeyType);
+        if (currentListItem) this.selectItemOnArrowKey(currentListItem, direction);
     }
 
 
 
-    protected selectItemOnArrowKey(currentListItem: ListItemComponent, arrowKeyType: ArrowKeyType) {
+    protected selectItemOnArrowKey(currentListItem: ListItemComponent, direction: number) {
         const currentIndex = this.list.indexOf(currentListItem.listItem);
-        const nextIndex = arrowKeyType === ArrowKeyType.Up ? currentIndex - 1 : currentIndex + 1;
+        const nextIndex = this.loopSelection ? (currentIndex + direction + this.list.length) % this.list.length : currentIndex + direction;
 
-        if (nextIndex >= 0 && nextIndex < this.list.length) {
-            if (this.noSelectOnArrowKey) {
-                const listItemComponent = this.listItemComponents.get(nextIndex);
-                if (listItemComponent) listItemComponent.hasPrimarySelectionBorderOnly = true;
-            }
-            this.selectListItem(this.list[nextIndex]);
+        if (this.noSelectOnArrowKey) {
+            const listItemComponent = this.listItemComponents.get(nextIndex);
+            if (listItemComponent) listItemComponent.hasPrimarySelectionBorderOnly = true;
         }
+        if (nextIndex >= 0 && nextIndex < this.list.length) this.selectListItem(this.list[nextIndex]);
     }
-
+    
 
 
     protected onItemSelectionUsingNoModifierKey(listItemComponent: ListItemComponent): void {
-        this.resetListItemProperties(listItemComponent.hasPrimarySelectionBorderOnly);
+        this.initializeListItemsInList(listItemComponent.hasPrimarySelectionBorderOnly);
         listItemComponent.hasPrimarySelection = true;
         if (!listItemComponent.hasPrimarySelectionBorderOnly) {
             listItemComponent.hasSecondarySelection = true;
@@ -122,18 +121,10 @@ export class List {
 
 
 
-    protected resetListItemProperties(primarySelectedListItemIsBorderOnly?: boolean): void {
-        this.listItemComponents.forEach(x => {
-            this.initializeProperties(x, primarySelectedListItemIsBorderOnly);
+    protected initializeListItemsInList(primarySelectedListItemIsBorderOnly?: boolean): void {
+        this.listItemComponents.forEach(listItemComponent => {
+            listItemComponent.initialize(primarySelectedListItemIsBorderOnly);
         });
-    }
-
-
-
-    protected initializeProperties(listItemComponent: ListItemComponent, primarySelectedListItemIsBorderOnly?: boolean) {
-        listItemComponent.hasPrimarySelection = false;
-        listItemComponent.secondarySelectionType = null;
-        if (!primarySelectedListItemIsBorderOnly) listItemComponent.hasSecondarySelection = false;
     }
 
 
