@@ -1,8 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListItem } from '../list-item';
-import { ArrowKeyType, SecondarySelectionType } from '../enums';
-import { List } from '../list';
+import { SecondarySelectionType } from '../enums';
 
 @Component({
   selector: 'ns-list-item',
