@@ -11,6 +11,8 @@ import { SecondarySelectionType } from '../enums';
   styleUrls: ['./list-item.component.scss']
 })
 export class ListItemComponent {
+  protected stopItemSelectPropagation: boolean = false;
+
   // Public
   public hasPrimarySelection: boolean = false;
   public hasSecondarySelection: boolean = false;
@@ -25,11 +27,15 @@ export class ListItemComponent {
   @Output() public onMouseDown: EventEmitter<ListItem> = new EventEmitter();
 
   // View Child
-  @ViewChild('htmlElement') public htmlElement!: ElementRef<HTMLElement>;
+  @ViewChild('listItemElement') public listItemElement!: ElementRef<HTMLElement>;
 
-
+ 
 
   public onListItemDown(e: MouseEvent) {
+    if (this.stopItemSelectPropagation) {
+      this.stopItemSelectPropagation = false;
+      return
+    }
     this.onMouseDown.emit(this.listItem);
   }
 

@@ -8,24 +8,30 @@
 
 .list-item {
     outline: none;
-    overflow: hidden;
+    display: flex;
     user-select: none;
-    position: relative;
-    white-space: nowrap;
+    align-items: center;
     cursor: $list-cursor;
-    text-overflow: ellipsis;
     color: $list-text-color;
     height: $list-item-height;
-    font-size: $list-font-size;
-    font-family: $list-font-family;
     border: $list-selection-border-width solid transparent;
-    line-height: $list-item-height - (($list-item-padding-top-bottom * 2) + ($list-selection-border-width * 2));
-    padding: $list-item-padding-top-bottom 0 $list-item-padding-top-bottom $list-indent - $list-selection-border-width;
+    padding-left: $list-indent - $list-selection-border-width;
 
     &:hover:not(.edited-list-item):not(.unselected-list-item):not(.list-primary-selection):not(.list-secondary-selection-all):not(.list-secondary-selection-top):not(.list-secondary-selection-middle):not(.list-secondary-selection-bottom):not(.list-primary-selection-border):not(.disabled-list-item) {
         color: $list-hover-text-color;
         background: $list-hover-color;
     }
+}
+
+
+
+.list-item-text {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: $list-font-size;
+    font-family: $list-font-family;
 }
 
 
@@ -62,7 +68,6 @@
     color: $list-secondary-selection-text-color;
     border-color: $list-secondary-selection-border-color;
     background: $list-secondary-selection-background-color;
-    padding-bottom: $list-selection-border-width + $list-item-padding-top-bottom;
 }
 
 
@@ -73,8 +78,6 @@
     color: $list-secondary-selection-text-color;
     border-color: $list-secondary-selection-border-color;
     background: $list-secondary-selection-background-color;
-    padding-top: $list-selection-border-width + $list-item-padding-top-bottom;
-    padding-bottom: $list-selection-border-width + $list-item-padding-top-bottom;
 }
 
 
@@ -84,7 +87,6 @@
     color: $list-secondary-selection-text-color;
     border-color: $list-secondary-selection-border-color;
     background: $list-secondary-selection-background-color;
-    padding-top: $list-selection-border-width + $list-item-padding-top-bottom;
 }
 
 
@@ -98,11 +100,16 @@
 
 
 .edited-list-item {
-    outline: none;
-    text-overflow: unset;
     color: $list-edited-item-text-color;
     border-color: $list-edited-item-border-color;
     background: $list-edited-item-background-color;
+}
+
+
+
+.edited-list-item-text {
+    outline: none;
+    text-overflow: unset;
 }
 
 

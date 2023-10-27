@@ -1,8 +1,8 @@
 import { ListItem } from '../list-item';
 import { CommonModule } from '@angular/common';
 import { ExitEditType, SecondarySelectionType } from '../enums';
-import { Component, EventEmitter, Output } from '@angular/core';
 import { ListItemComponent } from '../list-item/list-item.component';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'ns-editable-list-item',
@@ -34,28 +34,31 @@ export class EditableListItemComponent extends ListItemComponent {
   @Output() public setListItemsEnableState: EventEmitter<boolean> = new EventEmitter();
   @Output() public pastedListItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
 
+  // View Child
+  @ViewChild('listItemTextElement') public listItemTextElement!: ElementRef<HTMLElement>;
+
 
   public identify() {
-    this.isNew = this.inEditMode = this.hasSecondarySelection = true;
-    setTimeout(() => this.htmlElement.nativeElement.focus());
-    this.setListItemsEnableState.emit(false);
+    this.isNew = true;
+    this.setToEditMode();
   }
 
 
 
   public setToEditMode() {
+    this.selectRange();
     this.inEditMode = true;
+    this.getTextCaretPosition();
     this.hasPrimarySelection = false;
     this.setListItemsEnableState.emit(false);
-    this.selectRange();
-    this.textCaretPosition = window.getSelection()!;
+    setTimeout(() => this.listItemTextElement.nativeElement.focus());
   }
 
 
 
   private selectRange() {
     const range = document.createRange();
-    range.selectNodeContents(this.htmlElement.nativeElement.firstChild!);
+    range.selectNodeContents(this.listItemTextElement.nativeElement.firstChild!);
     const selection = window.getSelection();
     selection!.removeAllRanges();
     selection!.addRange(range);
@@ -64,7 +67,7 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
   public exitEditMode(exitEditType?: ExitEditType) {
-    if (this.htmlElement!.nativeElement.innerText.trim().length > 0) {
+    if (this.listItemTextElement.nativeElement.innerText.trim().length > 0) {
       exitEditType === ExitEditType.Escape ? this.cancelListItemEdit() : this.completeListItemEdit();
     } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit();
   }
@@ -76,11 +79,10 @@ export class EditableListItemComponent extends ListItemComponent {
       this.removeNewListItemFromList.emit();
       this.reinitializeList.emit();
     } else {
-      const text = this.htmlElement.nativeElement.innerText.trim();
-      this.htmlElement!.nativeElement.innerText = '';
+      this.listItemTextElement!.nativeElement.innerText = '';
 
       setTimeout(() => {
-        this.htmlElement!.nativeElement.innerText = text;
+        this.listItemTextElement!.nativeElement.innerText = this.listItem.text;
         this.reselectItem();
       });
     }
@@ -89,15 +91,15 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
   private completeListItemEdit(): void {
-    const text = this.htmlElement.nativeElement.innerText.trim();
-    this.htmlElement!.nativeElement.innerText = '';
+    const text = this.listItemTextElement.nativeElement.innerText.trim();
+    this.listItemTextElement!.nativeElement.innerText = '';
 
     setTimeout(() => {
-      this.htmlElement!.nativeElement.innerText = text;
+      this.listItemTextElement!.nativeElement.innerText = text;
       if (this.isNew) {
-        this.listPasted ? this.pastedListItemsEvent.emit(this.htmlElement.nativeElement.innerText.split('\n')) : this.addedListItemEvent.emit(this.htmlElement.nativeElement.innerText);
+        this.listPasted ? this.pastedListItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedListItemEvent.emit(this.listItemTextElement.nativeElement.innerText);
       } else {
-        this.editedListItemEvent.emit(new ListItem(this.listItem.id, this.htmlElement.nativeElement.innerText));
+        this.editedListItemEvent.emit(new ListItem(this.listItem.id, this.listItemTextElement.nativeElement.innerText));
       }
     });
   }
@@ -109,7 +111,7 @@ export class EditableListItemComponent extends ListItemComponent {
     this.inEditMode = false;
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
-    this.htmlElement!.nativeElement.focus();
+    this.listItemElement!.nativeElement.focus();
     this.setListItemsEnableState.emit(true);
   }
 
@@ -175,13 +177,13 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
   private pasteClipboardData(clipboardData: string): void {
-    const textContent = this.htmlElement.nativeElement.firstChild!.textContent!;
+    const textContent = this.listItemTextElement.nativeElement.firstChild!.textContent!;
     const caretOffset = this.textCaretPosition.anchorOffset;
 
-    this.htmlElement.nativeElement.firstChild!.textContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
+    this.listItemTextElement.nativeElement.firstChild!.textContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
 
     const range = document.createRange();
-    range.setStart(this.htmlElement.nativeElement.firstChild!, caretOffset + clipboardData.length);
+    range.setStart(this.listItemTextElement.nativeElement.firstChild!, caretOffset + clipboardData.length);
     const sel = window.getSelection();
     sel!.removeAllRanges();
     sel!.addRange(range);
@@ -193,12 +195,12 @@ export class EditableListItemComponent extends ListItemComponent {
     this.listPasted = true;
     const divElements: string[] = clipboardListData.map(pastedListItem => "<div class=pasted-list-item>" + pastedListItem + "</div>");
     const singleString = divElements.join("");
-    this.htmlElement.nativeElement.innerHTML = singleString;
+    this.listItemTextElement.nativeElement.innerHTML = singleString;
 
     // Set cursor at the end of the pasted text
     const range = document.createRange();
     const selection = window.getSelection();
-    range.selectNodeContents(this.htmlElement.nativeElement);
+    range.selectNodeContents(this.listItemTextElement.nativeElement);
     range.collapse(false);
     selection!.removeAllRanges();
     selection!.addRange(range);

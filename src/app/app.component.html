@@ -18,7 +18,7 @@
                (selectedItemsEvent)="onSelectedItems($event)">
       </ns-list> -->
 
-      <ns-editable-list #list
+      <!-- <ns-editable-list #list
                [list]="testList"
                [noSelectOnArrowKey]="false"
                (loadListEvent)="onLoadList()"
@@ -28,7 +28,19 @@
                (pastedListItemsEvent)="onPastedListItems($event)"
                (deletedListItemsEvent)="onDeletedListItems($event)"
                (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
-      </ns-editable-list>
+      </ns-editable-list> -->
+
+      <ns-editable-checkbox-list #list
+               [list]="testList"
+               [noSelectOnArrowKey]="false"
+               (loadListEvent)="onLoadList()"
+               (addedListItemEvent)="onListItemAdded($event)"
+               (selectedItemsEvent)="onSelectedItems($event)"
+               (editedListItemEvent)="onListItemEdited($event)"
+               (pastedListItemsEvent)="onPastedListItems($event)"
+               (deletedListItemsEvent)="onDeletedListItems($event)"
+               (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
+      </ns-editable-checkbox-list>
 
     </div>
   </div>
@@ -36,3 +48,5 @@
 
 
 <ns-checkbox [label]="'This is the checkbox label'"></ns-checkbox>
+
+

@@ -285,7 +285,7 @@ export class EditableListComponent extends ListComponent {
     const listItemComponent = this.editableListItemComponents.find(x => x.listItem.id == listItem.id);
     if (listItemComponent) {
       this.addEventListeners();
-      listItemComponent.htmlElement.nativeElement.focus();
+      listItemComponent.listItemElement.nativeElement.focus();
       this.setSelectedItems(listItemComponent);
     }
     const editableListItemInEditMode = this.editableListItemComponents.find(x => x.inEditMode);

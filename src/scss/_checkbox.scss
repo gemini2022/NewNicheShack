@@ -5,6 +5,7 @@
     height: $checkbox-container-height;
     padding-left: $checkbox-container-padding-left;
     padding-right: $checkbox-container-padding-right;
+    margin-left: -1px;
     user-select: none;
     align-items: center;
     -ms-user-select: none;
@@ -59,6 +60,7 @@
     position: relative;
     width: 15px;
     height: 15px;
+    flex-shrink: 0;
     margin-left: 0;
     margin-right: $checkbox-side-margin;
     border: $checkbox-border-width solid $checkbox-border-color;

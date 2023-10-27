@@ -153,7 +153,7 @@ export class ListComponent {
     const listItemComponent = this.listItemComponents.find(x => x.listItem.id == listItem.id);
     if (listItemComponent) {
       this.addEventListeners();
-      listItemComponent.htmlElement.nativeElement.focus();
+      listItemComponent.listItemElement.nativeElement.focus();
       this.onItemSelectionUsingNoModifierKey(listItemComponent);
       this.setSecondarySelectionType();
     }
