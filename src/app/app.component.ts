@@ -1,7 +1,7 @@
 import { ListItem } from './list-item';
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
-import { EditableListComponent } from './editable-list/editable-list.component';
+import { EditableListContainerComponent } from './editable-list-container/editable-list-container.component';
 import { DataService } from './services/data.service';
 import { ListComponent } from './list/list.component';
 import { CheckboxComponent } from './checkbox/checkbox.component';
@@ -10,7 +10,7 @@ import { EditableCheckboxListComponent } from './editable-checkbox-list/editable
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent, EditableListComponent, CheckboxComponent, EditableCheckboxListComponent],
+  imports: [CommonModule, ListComponent, EditableListContainerComponent, CheckboxComponent, EditableCheckboxListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -22,7 +22,7 @@ export class AppComponent {
   public testList: Array<ListItem> = new Array<ListItem>();
 
   // ViewChild
-  @ViewChild('list') listComponent!: EditableListComponent;
+  @ViewChild('list') listComponent!: EditableListContainerComponent;
 
 
   public trumpy: boolean = false;

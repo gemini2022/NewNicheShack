@@ -6,13 +6,13 @@ import { ListItem } from '../list-item';
 import { ListComponent } from '../list/list.component';
 
 @Component({
-  selector: 'ns-editable-list',
+  selector: 'ns-editable-list-container',
   standalone: true,
   imports: [CommonModule, EditableListItemComponent],
-  templateUrl: './editable-list.component.html',
-  styleUrls: ['./editable-list.component.scss']
+  templateUrl: './editable-list-container.component.html',
+  styleUrls: ['./editable-list-container.component.scss']
 })
-export class EditableListComponent extends ListComponent {
+export class EditableListContainerComponent extends ListComponent {
   // Private
   private idOfEditedListItem: any;
   private ctrlKeyDown: boolean = false;
