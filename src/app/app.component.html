@@ -11,6 +11,8 @@
   <div style="background: #282828; padding: 10px; border: 1px solid #414141; border-radius: 4px; margin-right: 100px;">
     <div style="width: 300px; height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
       
+      <ns-trumpy-list [list]="testList"></ns-trumpy-list>
+
       <!-- <ns-list #list
                [list]="testList"
                [noSelectOnArrowKey]="true"
@@ -18,7 +20,7 @@
                (selectedItemsEvent)="onSelectedItems($event)">
       </ns-list> -->
 
-      <ns-editable-list-container #list
+      <!-- <ns-editable-list-container #list
                [list]="testList"
                [noSelectOnArrowKey]="false"
                (loadListEvent)="onLoadList()"
@@ -28,7 +30,7 @@
                (pastedListItemsEvent)="onPastedListItems($event)"
                (deletedListItemsEvent)="onDeletedListItems($event)"
                (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
-      </ns-editable-list-container>
+      </ns-editable-list-container> -->
 
       <!-- <ns-editable-checkbox-list #list
                [list]="testList"

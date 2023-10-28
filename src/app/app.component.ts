@@ -6,11 +6,12 @@ import { DataService } from './services/data.service';
 import { ListComponent } from './list/list.component';
 import { CheckboxComponent } from './checkbox/checkbox.component';
 import { EditableCheckboxListComponent } from './editable-checkbox-list/editable-checkbox-list.component';
+import { TrumpyListComponent } from './trumpy-list/trumpy-list.component';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent, EditableListContainerComponent, CheckboxComponent, EditableCheckboxListComponent],
+  imports: [CommonModule, ListComponent, TrumpyListComponent, CheckboxComponent, EditableCheckboxListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -25,7 +26,6 @@ export class AppComponent {
   @ViewChild('list') listComponent!: EditableListContainerComponent;
 
 
-  public trumpy: boolean = false;
 
 
 

@@ -1,0 +1,13 @@
+<ns-editable-list-container [list]="list"
+                            (loadListEvent)="loadListEvent.emit()"
+                            [isMultiselectable]="isMultiselectable"
+                            [noSelectOnArrowKey]="noSelectOnArrowKey"
+                            (inputTypedEvent)="inputTypedEvent.emit($event)"
+                            (addedListItemEvent)="addedListItemEvent.emit($event)"
+                            (selectedItemsEvent)="selectedItemsEvent.emit($event)"
+                            (editedListItemEvent)="editedListItemEvent.emit($event)"
+                            (pastedListItemsEvent)="pastedListItemsEvent.emit($event)"
+                            (deletedListItemsEvent)="deletedListItemsEvent.emit($event)"
+                            (deleteKeyPressedEvent)="deleteKeyPressedEvent.emit($event)"
+                            (listItemsToBeDeletedEvent)="listItemsToBeDeletedEvent.emit($event)">
+</ns-editable-list-container>
