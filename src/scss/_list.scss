@@ -15,7 +15,6 @@
     color: $list-text-color;
     height: $list-item-height;
     border: $list-selection-border-width solid transparent;
-    padding-left: $list-indent - $list-selection-border-width;
 
     &:hover:not(.edited-list-item):not(.unselected-list-item):not(.list-primary-selection):not(.list-secondary-selection-all):not(.list-secondary-selection-top):not(.list-secondary-selection-middle):not(.list-secondary-selection-bottom):not(.list-primary-selection-border):not(.disabled-list-item) {
         color: $list-hover-text-color;
@@ -32,6 +31,7 @@
     text-overflow: ellipsis;
     font-size: $list-font-size;
     font-family: $list-font-family;
+    padding-left: $list-indent - $list-selection-border-width;
 }
 
 

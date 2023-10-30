@@ -5,5 +5,9 @@
      (contextmenu)="$event.preventDefault()"
      [ngClass]="{'list-primary-selection': hasPrimarySelection && hasSecondarySelection,
                  'list-secondary-selection-all': secondarySelectionType == SecondarySelectionType.All,
-                 'list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection}"
-     >{{listItem.text}}</div>
+                 'list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection}">
+     
+     <div #listItemTextElement
+          class="list-item-text"
+          >{{listItem.text}}</div>
+</div>

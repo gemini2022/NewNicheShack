@@ -38,6 +38,7 @@ export class EditableListItemComponent extends ListItemComponent {
   @ViewChild('listItemTextElement') public listItemTextElement!: ElementRef<HTMLElement>;
 
 
+  
   public identify() {
     this.isNew = true;
     this.setToEditMode();

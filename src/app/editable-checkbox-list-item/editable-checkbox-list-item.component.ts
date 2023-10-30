@@ -10,6 +10,4 @@ import { CheckboxComponent } from '../checkbox/checkbox.component';
   templateUrl: './editable-checkbox-list-item.component.html',
   styleUrls: ['./editable-checkbox-list-item.component.scss']
 })
-export class EditableCheckboxListItemComponent extends EditableListItemComponent {
-
-}
+export class EditableCheckboxListItemComponent extends EditableListItemComponent { }

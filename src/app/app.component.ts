@@ -1,17 +1,16 @@
 import { ListItem } from './list-item';
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
-import { EditableListContainerComponent } from './editable-list-container/editable-list-container.component';
+import { EditableListComponent } from './editable-list/editable-list.component';
 import { DataService } from './services/data.service';
 import { ListComponent } from './list/list.component';
 import { CheckboxComponent } from './checkbox/checkbox.component';
 import { EditableCheckboxListComponent } from './editable-checkbox-list/editable-checkbox-list.component';
-import { TrumpyListComponent } from './trumpy-list/trumpy-list.component';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent, TrumpyListComponent, CheckboxComponent, EditableCheckboxListComponent],
+  imports: [CommonModule, ListComponent, CheckboxComponent, EditableCheckboxListComponent, EditableListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -23,7 +22,7 @@ export class AppComponent {
   public testList: Array<ListItem> = new Array<ListItem>();
 
   // ViewChild
-  @ViewChild('list') listComponent!: EditableListContainerComponent;
+  @ViewChild('list') listComponent!: EditableListComponent;
 
 
 
@@ -46,7 +45,7 @@ export class AppComponent {
 
 
 
-  onAddListItem() {
+  onAddListItemButtonClick() {
     this.listComponent.addListItem();
   }
 
@@ -63,7 +62,7 @@ export class AppComponent {
 
 
 
-  onEditListItem() {
+  onEditListItemButtonClick() {
     this.listComponent.editListItem();
   }
 

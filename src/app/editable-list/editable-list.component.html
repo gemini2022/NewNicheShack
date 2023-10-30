@@ -14,10 +14,10 @@
                                (onMouseDown)="selectListItem($event)"
                                (reinitializeList)="reinitializeList()"
                                (addedListItemEvent)="addedListItemEvent.emit($event)"
-                               (setListItemsEnableState)="setListItemsEnableState($event)"
+                               (editedListItemEvent)="editedListItemEvent.emit($event)"
                                (removeNewListItemFromList)="removeNewListItemFromList()"
                                (pastedListItemsEvent)="pastedListItemsEvent.emit($event)"
-                               (editedListItemEvent)="editedListItemEvent.emit($event)"
+                               (setListItemsEnableState)="setListItemsEnableState($event)"
                                (stopMouseDownPropagation)="stopMouseDownPropagation = true">
         </ns-editable-list-item>
     </div>

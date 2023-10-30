@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EditableListContainerComponent } from '../editable-list-container/editable-list-container.component';
+import { EditableListComponent } from '../editable-list/editable-list.component';
 import { EditableCheckboxListItemComponent } from '../editable-checkbox-list-item/editable-checkbox-list-item.component';
 
 @Component({
@@ -10,6 +10,4 @@ import { EditableCheckboxListItemComponent } from '../editable-checkbox-list-ite
   templateUrl: './editable-checkbox-list.component.html',
   styleUrls: ['./editable-checkbox-list.component.scss']
 })
-export class EditableCheckboxListComponent extends EditableListContainerComponent {
-
-}
+export class EditableCheckboxListComponent extends EditableListComponent { }
