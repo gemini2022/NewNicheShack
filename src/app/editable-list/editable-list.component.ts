@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, QueryList } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, SimpleChange } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditableListItemComponent } from '../editable-list-item/editable-list-item.component';
 import { ExitEditType } from '../enums';
@@ -46,8 +46,8 @@ export class EditableListComponent extends ListComponent {
 
 
 
-  protected override ngOnChanges(): void {
-    super.ngOnChanges();
+  protected override ngOnChanges(changes: any): void {
+    super.ngOnChanges(changes);
     this.autoselectNewListItem();
     this.autoselectEditedListItem();
     this.autoselectNextListItemAfterDelete();

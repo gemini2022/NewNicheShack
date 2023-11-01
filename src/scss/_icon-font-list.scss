@@ -1,0 +1,49 @@
+.icon-font-list-item {
+    @extend .list-item;
+    height: $icon-font-list-item-height;
+
+    &:hover:not(.icon-font-list-primary-selection):not(.icon-font-list-primary-selection-border-only):not(.icon-font-list-secondary-selection-all) {
+        .icon-font {
+            color: $icon-font-hover-color;
+        }
+    }
+}
+
+
+
+.icon-font {
+    display: flex;
+    color: $icon-font-color;
+    justify-content: center;
+    width: $icon-font-container-width;
+}
+
+
+
+.icon-font-list-primary-selection {
+    @extend .list-primary-selection;
+
+    .icon-font{
+        color: $icon-font-selection-color;
+    }
+}
+
+
+
+.icon-font-list-primary-selection-border-only {
+    @extend .list-primary-selection-border-only;
+
+    .icon-font {
+        color: $icon-font-hover-color;
+    }
+}
+
+
+
+.icon-font-list-secondary-selection-all {
+    @extend .list-secondary-selection-all;
+
+    .icon-font {
+        color: $icon-font-hover-color;
+    }
+}

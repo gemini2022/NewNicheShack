@@ -1,0 +1,18 @@
+<div #listItemElement
+     tabindex="-1"
+     class="icon-font-list-item"
+     (mousedown)="onListItemDown($event)"
+     (contextmenu)="$event.preventDefault()"
+     [ngClass]="{'icon-font-list-primary-selection': hasPrimarySelection && hasSecondarySelection,
+                 'icon-font-list-secondary-selection-all': secondarySelectionType == SecondarySelectionType.All,
+                 'icon-font-list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection}">
+     
+     <div class="icon-font">
+          <i [class]="listItem.iconFont"></i>
+     </div>
+     
+
+     <div #listItemTextElement
+          class="list-item-text"
+          >{{listItem.text}}</div>
+</div>

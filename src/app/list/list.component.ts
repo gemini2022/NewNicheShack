@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, QueryList, Renderer2, ViewChildren, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, Renderer2, SimpleChange, ViewChildren, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListItemComponent } from '../list-item/list-item.component';
 import { SecondarySelectionType } from '../enums';
@@ -13,13 +13,10 @@ import { ListItem } from '../list-item';
 })
 export class ListComponent {
   // Private
-  protected _loading!: boolean;
+  protected loading: boolean = true;
   protected renderer = inject(Renderer2);
   protected removeKeydownListener!: () => void;
   protected eventListenersAdded: boolean = false;
-
-  // Public
-  public get loading(): boolean { return this._loading; }
 
   // Inputs
   @Input() public loopSelection: boolean = true;
@@ -31,32 +28,18 @@ export class ListComponent {
   @Output() public selectedItemsEvent: EventEmitter<Array<ListItem>> = new EventEmitter();
 
   // View Children
-  @ViewChildren('listItemComponent') public listItemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
+  @ViewChildren('listItemComponent') protected listItemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
+
+
+  
 
 
 
-  private ngOnInit(): void {
-    this.load();
+  protected ngOnChanges(changes: any): void {
+    if((changes.list.isFirstChange() && this.loading && this.list.length > 0) || (!changes.list.isFirstChange() && this.loading)) {
+      this.loading = false
+    } 
   }
-
-
-
-  protected ngOnChanges(): void {
-    this.onLoadComplete();
-  }
-
-
-  private load(): void {
-    this._loading = true;
-    this.loadListEvent.emit();
-  }
-
-
-
-  private onLoadComplete(): void {
-    if (this._loading && this.list.length > 0) this._loading = false;
-  }
-
 
 
   protected addEventListeners(): void {

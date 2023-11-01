@@ -14,13 +14,13 @@ import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular
 export class EditableListItemComponent extends ListItemComponent {
   // Private
   private textCaretPosition!: Selection;
+  protected listPasted: boolean = false;
 
   // Public
   public isNew: boolean = false;
   public isPivot: boolean = false;
   public isEnabled: boolean = true;
   public inEditMode: boolean = false;
-  public listPasted: boolean = false;
   public hasUnselection: boolean = false;
 
   // Output
@@ -35,10 +35,10 @@ export class EditableListItemComponent extends ListItemComponent {
   @Output() public pastedListItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
 
   // View Child
-  @ViewChild('listItemTextElement') public listItemTextElement!: ElementRef<HTMLElement>;
+  @ViewChild('listItemTextElement') protected listItemTextElement!: ElementRef<HTMLElement>;
 
 
-  
+
   public identify() {
     this.isNew = true;
     this.setToEditMode();
@@ -59,10 +59,12 @@ export class EditableListItemComponent extends ListItemComponent {
 
   private selectRange() {
     const range = document.createRange();
-    range.selectNodeContents(this.listItemTextElement.nativeElement.firstChild!);
+    if (this.listItemTextElement.nativeElement.firstChild) range.selectNodeContents(this.listItemTextElement.nativeElement.firstChild);
     const selection = window.getSelection();
-    selection!.removeAllRanges();
-    selection!.addRange(range);
+    if (selection) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
 
 
@@ -80,10 +82,10 @@ export class EditableListItemComponent extends ListItemComponent {
       this.removeNewListItemFromList.emit();
       this.reinitializeList.emit();
     } else {
-      this.listItemTextElement!.nativeElement.innerText = '';
+      this.listItemTextElement.nativeElement.innerText = '';
 
       setTimeout(() => {
-        this.listItemTextElement!.nativeElement.innerText = this.listItem.text;
+        this.listItemTextElement.nativeElement.innerText = this.listItem.text;
         this.reselectItem();
       });
     }
@@ -93,10 +95,10 @@ export class EditableListItemComponent extends ListItemComponent {
 
   private completeListItemEdit(): void {
     const text = this.listItemTextElement.nativeElement.innerText.trim();
-    this.listItemTextElement!.nativeElement.innerText = '';
+    this.listItemTextElement.nativeElement.innerText = '';
 
     setTimeout(() => {
-      this.listItemTextElement!.nativeElement.innerText = text;
+      this.listItemTextElement.nativeElement.innerText = text;
       if (this.isNew) {
         this.listPasted ? this.pastedListItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedListItemEvent.emit(this.listItemTextElement.nativeElement.innerText);
       } else {
@@ -112,7 +114,7 @@ export class EditableListItemComponent extends ListItemComponent {
     this.inEditMode = false;
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
-    this.listItemElement!.nativeElement.focus();
+    this.listItemElement.nativeElement.focus();
     this.setListItemsEnableState.emit(true);
   }
 
@@ -150,9 +152,9 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
 
-  public getTextCaretPosition(): void {
+  protected getTextCaretPosition(): void {
     if (this.inEditMode) setTimeout(() => {
-      this.textCaretPosition = window.getSelection()!
+      this.textCaretPosition = window.getSelection()!;
     });
   }
 
@@ -178,16 +180,21 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
   private pasteClipboardData(clipboardData: string): void {
-    const textContent = this.listItemTextElement.nativeElement.firstChild!.textContent!;
-    const caretOffset = this.textCaretPosition.anchorOffset;
+    if (this.listItemTextElement.nativeElement.firstChild) {
+      const textContent = this.listItemTextElement.nativeElement.firstChild.textContent;
+      const caretOffset = this.textCaretPosition.anchorOffset;
 
-    this.listItemTextElement.nativeElement.firstChild!.textContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
+      if (textContent) this.listItemTextElement.nativeElement.firstChild.textContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
 
-    const range = document.createRange();
-    range.setStart(this.listItemTextElement.nativeElement.firstChild!, caretOffset + clipboardData.length);
-    const sel = window.getSelection();
-    sel!.removeAllRanges();
-    sel!.addRange(range);
+      const range = document.createRange();
+      range.setStart(this.listItemTextElement.nativeElement.firstChild, caretOffset + clipboardData.length);
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+
   }
 
 
@@ -203,13 +210,15 @@ export class EditableListItemComponent extends ListItemComponent {
     const selection = window.getSelection();
     range.selectNodeContents(this.listItemTextElement.nativeElement);
     range.collapse(false);
-    selection!.removeAllRanges();
-    selection!.addRange(range);
+    if (selection) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
 
 
 
-  public override onListItemDown(e: MouseEvent) {
+  protected override onListItemDown(e: MouseEvent) {
     const rightMouseButton = 2;
     this.stopMouseDownPropagation.emit();
 

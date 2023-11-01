@@ -31,7 +31,7 @@ export class ListItemComponent {
 
  
 
-  public onListItemDown(e: MouseEvent) {
+  protected onListItemDown(e: MouseEvent) {
     if (this.stopItemSelectionPropagation) {
       this.stopItemSelectionPropagation = false;
       return
