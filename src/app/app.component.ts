@@ -8,6 +8,7 @@ import { CheckboxComponent } from './checkbox/checkbox.component';
 import { EditableCheckboxListComponent } from './editable-checkbox-list/editable-checkbox-list.component';
 import { IconFontListComponent } from './icon-font-list/icon-font-list.component';
 import { IconFontListItem } from './icon-font-list-item';
+import { CheckboxListItem } from './checkbox-list-item';
 
 @Component({
   selector: 'ns-root',
@@ -22,6 +23,7 @@ export class AppComponent {
 
   // Public
   public testList: Array<ListItem> = new Array<ListItem>();
+  public checkboxList: Array<CheckboxListItem> = new Array<CheckboxListItem>();
 
   // ViewChild
   @ViewChild('list') listComponent!: EditableListComponent;
@@ -63,6 +65,13 @@ export class AppComponent {
     this.dataService.get('api/List').subscribe(
       (listItems: Array<ListItem>) => {
         this.testList = listItems;
+      }
+    )
+
+
+    this.dataService.get('api/CheckboxList').subscribe(
+      (checkboxListItems: Array<CheckboxListItem>) => {
+        this.checkboxList = checkboxListItems;
       }
     )
   }
@@ -137,5 +146,39 @@ export class AppComponent {
     }).subscribe((listItems: Array<ListItem>) => {
       this.testList = listItems;
     });
+  }
+
+
+
+
+
+
+
+  onCheckboxListItemAdded(newCheckboxListItemText: string) {
+    this.dataService.post('api/CheckboxList', {
+      text: newCheckboxListItemText
+    }).subscribe((checkboxListItems: Array<CheckboxListItem>) => {
+      this.checkboxList = checkboxListItems;
+    });
+  }
+
+
+
+  onCheckboxListItemEdited(checkboxListItem: ListItem) {
+    this.dataService.put('api/CheckboxList', {
+      id: checkboxListItem.id,
+      text: checkboxListItem.text
+    }).subscribe((checkboxListItems: Array<CheckboxListItem>) => {
+      this.checkboxList = checkboxListItems;
+    });
+  }
+
+
+
+  onCheckboxChanged(checkboxListItem: CheckboxListItem) {
+    this.dataService.put('api/CheckboxList/CheckboxChange', {
+      id: checkboxListItem.id,
+      isChecked: checkboxListItem.isChecked
+    }).subscribe();
   }
 }

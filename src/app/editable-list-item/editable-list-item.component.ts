@@ -47,10 +47,10 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
   public setToEditMode() {
-    this.selectRange();
     this.inEditMode = true;
     this.getTextCaretPosition();
     this.hasPrimarySelection = false;
+    if (!this.isNew) this.selectRange();
     this.setListItemsEnableState.emit(false);
     setTimeout(() => this.listItemTextElement.nativeElement.focus());
   }
@@ -58,14 +58,26 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
   private selectRange() {
-    const range = document.createRange();
-    if (this.listItemTextElement.nativeElement.firstChild) range.selectNodeContents(this.listItemTextElement.nativeElement.firstChild);
-    const selection = window.getSelection();
-    if (selection) {
-      selection.removeAllRanges();
-      selection.addRange(range);
+    const listItemTextElement = this.listItemTextElement;
+
+    if (listItemTextElement && listItemTextElement.nativeElement) {
+      const firstChild = listItemTextElement.nativeElement.firstChild;
+
+      if (firstChild) {
+        const range = document.createRange();
+        range.selectNodeContents(firstChild);
+        const selection = window.getSelection();
+
+        if (selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      }
     }
   }
+
+
+
 
 
 
@@ -77,17 +89,23 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
 
+
+
   private cancelListItemEdit(): void {
     if (this.isNew) {
       this.removeNewListItemFromList.emit();
       this.reinitializeList.emit();
     } else {
-      this.listItemTextElement.nativeElement.innerText = '';
+      const listItemTextElement = this.listItemTextElement;
 
-      setTimeout(() => {
-        this.listItemTextElement.nativeElement.innerText = this.listItem.text;
-        this.reselectItem();
-      });
+      if (listItemTextElement && listItemTextElement.nativeElement) {
+        listItemTextElement.nativeElement.innerText = '';
+
+        setTimeout(() => {
+          listItemTextElement.nativeElement.innerText = this.listItem.text;
+          this.reselectItem();
+        });
+      }
     }
   }
 
@@ -117,6 +135,10 @@ export class EditableListItemComponent extends ListItemComponent {
     this.listItemElement.nativeElement.focus();
     this.setListItemsEnableState.emit(true);
   }
+
+
+
+
 
 
 
@@ -179,23 +201,36 @@ export class EditableListItemComponent extends ListItemComponent {
 
 
 
+
+
   private pasteClipboardData(clipboardData: string): void {
-    if (this.listItemTextElement.nativeElement.firstChild) {
-      const textContent = this.listItemTextElement.nativeElement.firstChild.textContent;
-      const caretOffset = this.textCaretPosition.anchorOffset;
+    const listItemTextElement = this.listItemTextElement;
 
-      if (textContent) this.listItemTextElement.nativeElement.firstChild.textContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
+    if (listItemTextElement && listItemTextElement.nativeElement) {
+      const firstChild = listItemTextElement.nativeElement.firstChild;
 
-      const range = document.createRange();
-      range.setStart(this.listItemTextElement.nativeElement.firstChild, caretOffset + clipboardData.length);
-      const sel = window.getSelection();
-      if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(range);
+      if (firstChild) {
+        const textContent = firstChild.textContent;
+        const caretOffset = this.textCaretPosition.anchorOffset;
+
+        if (textContent !== null) {
+          const updatedTextContent = textContent.slice(0, caretOffset) + clipboardData + textContent.slice(this.textCaretPosition.focusOffset);
+
+          firstChild.textContent = updatedTextContent;
+
+          const range = document.createRange();
+          range.setStart(firstChild, caretOffset + clipboardData.length);
+          const sel = window.getSelection();
+
+          if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        }
       }
     }
-
   }
+
 
 
 
@@ -203,18 +238,26 @@ export class EditableListItemComponent extends ListItemComponent {
     this.listPasted = true;
     const divElements: string[] = clipboardListData.map(pastedListItem => "<div class=pasted-list-item>" + pastedListItem + "</div>");
     const singleString = divElements.join("");
-    this.listItemTextElement.nativeElement.innerHTML = singleString;
+    const listItemTextElement = this.listItemTextElement;
 
-    // Set cursor at the end of the pasted text
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(this.listItemTextElement.nativeElement);
-    range.collapse(false);
-    if (selection) {
-      selection.removeAllRanges();
-      selection.addRange(range);
+    if (listItemTextElement && listItemTextElement.nativeElement) {
+      listItemTextElement.nativeElement.innerHTML = singleString;
+
+      // Set cursor at the end of the pasted text
+      const range = document.createRange();
+      range.selectNodeContents(listItemTextElement.nativeElement);
+      range.collapse(false);
+      const selection = window.getSelection();
+
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
     }
   }
+
+
+
 
 
 

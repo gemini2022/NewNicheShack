@@ -15,7 +15,12 @@
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
      [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
      
-     <ns-checkbox (onMouseDown)="stopItemSelectionPropagation = true"></ns-checkbox>
+     <div style="margin-left: -1px; padding-left: 1px;" (mousedown)="stopItemSelectionPropagation = true">
+          <ns-checkbox [isChecked]="listItem.isChecked"
+                       (checkboxChangedEvent)="listItem.isChecked = $event; checkboxChangedEvent.emit(listItem)">
+          </ns-checkbox>
+     </div>
+
      <div #listItemTextElement
           class="list-item-text"
           (paste)="onPaste($event)"

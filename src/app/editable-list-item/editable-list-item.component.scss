@@ -1,0 +1,5 @@
+@import '../../scss/variables';
+
+.list-item-text {
+    padding-left: $list-indent - $list-selection-border-width;
+}

@@ -14,8 +14,9 @@
                                         (onMouseDown)="selectListItem($event)"
                                         (reinitializeList)="reinitializeList()"
                                         (addedListItemEvent)="addedListItemEvent.emit($event)"
-                                        (setListItemsEnableState)="setListItemsEnableState($event)"
                                         (removeNewListItemFromList)="removeNewListItemFromList()"
+                                        (setListItemsEnableState)="setListItemsEnableState($event)"
+                                        (checkboxChangedEvent)="checkboxChangedEvent.emit($event)"
                                         (pastedListItemsEvent)="pastedListItemsEvent.emit($event)"
                                         (editedListItemEvent)="editedListItemEvent.emit($event)"
                                         (stopMouseDownPropagation)="stopMouseDownPropagation = true">

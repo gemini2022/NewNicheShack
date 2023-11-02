@@ -17,7 +17,6 @@ export class CheckboxComponent {
   @Input() public labelRight: boolean = true;
 
   // Outputs
-  @Output() public onMouseDown: EventEmitter<void> = new EventEmitter();
   @Output() public checkboxChangedEvent: EventEmitter<boolean> = new EventEmitter();
   
 

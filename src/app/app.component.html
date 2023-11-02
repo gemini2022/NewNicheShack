@@ -11,11 +11,11 @@
   <div style="background: #282828; padding: 10px; border: 1px solid #414141; border-radius: 4px; margin-right: 100px;">
     <div style="width: 300px; height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
       
-      <!-- <ns-list #list
+      <ns-list #list
                [list]="testList"
                [noSelectOnArrowKey]="true"
                (selectedItemsEvent)="onSelectedItems($event)">
-      </ns-list> -->
+      </ns-list>
 
 
 
@@ -32,20 +32,22 @@
                         (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
       </ns-editable-list> -->
 
-      <ns-editable-checkbox-list #list
-                                 [list]="testList"
+      <!-- <ns-editable-checkbox-list #list
+                                 [list]="checkboxList"
                                  [noSelectOnArrowKey]="false"
-                                 (addedListItemEvent)="onListItemAdded($event)"
-                                 (selectedItemsEvent)="onSelectedItems($event)"
-                                 (editedListItemEvent)="onListItemEdited($event)"
+                                 (addedListItemEvent)="onCheckboxListItemAdded($event)"
+                                 (editedListItemEvent)="onCheckboxListItemEdited($event)"
                                  (pastedListItemsEvent)="onPastedListItems($event)"
+                                 (checkboxChangedEvent)="onCheckboxChanged($event)"
                                  (deletedListItemsEvent)="onDeletedListItems($event)"
                                  (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
-      </ns-editable-checkbox-list>
+      </ns-editable-checkbox-list> -->
 
     </div>
   </div>
 
+
+  
 
 
   <!-- <div style="width: 164px; height: 186px; margin-right: 100px;  background: rgba(22, 22, 22, 0.945); border-radius: 5px; border: 1px solid #424242; padding: 2px;">

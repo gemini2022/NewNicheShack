@@ -234,7 +234,7 @@ export class EditableListComponent extends ListComponent {
 
 
   private autoselectMultipleListItems(): void {
-    let editableListItemComponent: EditableListItemComponent | undefined;
+    let editableListItemComponent: EditableListItemComponent;
 
     setTimeout(() => {
       this.list.forEach((item, index) => {
@@ -243,11 +243,11 @@ export class EditableListComponent extends ListComponent {
 
         if (isNewListItem && currentListItemComponent) {
           editableListItemComponent = currentListItemComponent;
-          editableListItemComponent!.hasSecondarySelection = true;
+          editableListItemComponent.hasSecondarySelection = true;
         }
       });
       this.setSecondarySelectionType();
-      if (editableListItemComponent) editableListItemComponent.hasPrimarySelection = true;
+      editableListItemComponent.hasPrimarySelection = true;
       this.editableListItemComponents.forEach(x => x.isEnabled = true);
     });
   }
