@@ -6,7 +6,7 @@ const PROXY_CONFIG = [
         ],
         target: "http://localhost:5216/",
         secure: false,
-        "changeOrigin": true
+        changeOrigin: true
     }
 ]
 module.exports = PROXY_CONFIG;

@@ -9,11 +9,13 @@ import { EditableCheckboxListComponent } from './editable-checkbox-list/editable
 import { IconFontListComponent } from './icon-font-list/icon-font-list.component';
 import { IconFontListItem } from './icon-font-list-item';
 import { CheckboxListItem } from './checkbox-list-item';
+import { ImageListItem } from './image-list-item';
+import { ImageListComponent } from './image-list/image-list.component';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent, CheckboxComponent, EditableCheckboxListComponent, EditableListComponent, IconFontListComponent],
+  imports: [CommonModule, ListComponent, CheckboxComponent, EditableCheckboxListComponent, EditableListComponent, IconFontListComponent, ImageListComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -23,6 +25,7 @@ export class AppComponent {
 
   // Public
   public testList: Array<ListItem> = new Array<ListItem>();
+  public imageList: Array<ImageListItem> = new Array<ImageListItem>();
   public checkboxList: Array<CheckboxListItem> = new Array<CheckboxListItem>();
 
   // ViewChild
@@ -62,18 +65,24 @@ export class AppComponent {
 
 
   ngOnInit() {
-    this.dataService.get('api/List').subscribe(
-      (listItems: Array<ListItem>) => {
-        this.testList = listItems;
+    // this.dataService.get('api/List').subscribe(
+    //   (listItems: Array<ListItem>) => {
+    //     this.testList = listItems;
+    //   }
+    // )
+
+    this.dataService.get('api/ImageList').subscribe(
+      (imageListItems: Array<ImageListItem>) => {
+        this.imageList = imageListItems;
       }
     )
 
 
-    this.dataService.get('api/CheckboxList').subscribe(
-      (checkboxListItems: Array<CheckboxListItem>) => {
-        this.checkboxList = checkboxListItems;
-      }
-    )
+    // this.dataService.get('api/CheckboxList').subscribe(
+    //   (checkboxListItems: Array<CheckboxListItem>) => {
+    //     this.checkboxList = checkboxListItems;
+    //   }
+    // )
   }
 
 

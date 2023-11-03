@@ -24,7 +24,6 @@ export class ListComponent {
   @Input() public list: Array<ListItem> = new Array<ListItem>();
 
   // Events
-  @Output() public loadListEvent: EventEmitter<void> = new EventEmitter();
   @Output() public selectedItemsEvent: EventEmitter<Array<ListItem>> = new EventEmitter();
 
   // View Children

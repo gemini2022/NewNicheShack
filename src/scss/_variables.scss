@@ -1,7 +1,7 @@
 
 // ===================================== LIST ===================================== \\
 
-// ----Website----
+// -----Website-----\\
 // $list-indent: 5px;
 // $list-cursor: pointer;
 // $list-font-size: 14px;
@@ -22,7 +22,7 @@
 
 
 
-// ----Manager----
+// -----Manager-----\\
 $list-indent: 5px;
 $list-cursor: auto;
 $list-font-size: 14px;
@@ -40,7 +40,7 @@ $list-secondary-selection-background-color: rgba(255, 186, 0, 0.05);
 
 
 
-// Editable List
+// -----Editable List-----\\
 $list-disabled-opacity: 0.25;
 $list-edited-item-text-color: #dcdcdc;
 $list-edited-item-background-color: #2b2b2b;
@@ -48,13 +48,17 @@ $list-secondary-selection-text-color: #d2d2d2;
 $list-edited-item-border-color: rgba(255, 186, 0, 0.25);
 
 
-// -----Icon Font-----
+// -----Icon Font-----\\
 $icon-font-color: #8a0077;
 $icon-font-container-width: 25px;
 $icon-font-list-item-height: 30px;
 $icon-font-hover-color: #c800b1;
 $icon-font-selection-color: #f193f1;
 
+
+
+// -----Image List-----\\
+$image-list-item-height: 40px;
 
 
 

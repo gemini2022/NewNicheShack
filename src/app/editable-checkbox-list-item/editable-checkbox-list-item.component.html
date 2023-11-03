@@ -1,5 +1,5 @@
 <div #listItemElement
-     class="list-item"
+     class="checkbox-list-item"
      (dblclick)="onDoubleClick.emit()"
      (mousedown)="onListItemDown($event)"
      [tabindex]="!inEditMode ? '-1' : null"
@@ -15,14 +15,14 @@
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
      [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
      
-     <div style="margin-left: -1px; padding-left: 1px;" (mousedown)="stopItemSelectionPropagation = true">
+     <div class="checkbox-container" (mousedown)="stopItemSelectionPropagation = true">
           <ns-checkbox [isChecked]="listItem.isChecked"
                        (checkboxChangedEvent)="listItem.isChecked = $event; checkboxChangedEvent.emit(listItem)">
           </ns-checkbox>
      </div>
 
      <div #listItemTextElement
-          class="list-item-text"
+          class="checkbox-list-item-text"
           (paste)="onPaste($event)"
           (keydown)="getTextCaretPosition()"
           (mouseup)="getTextCaretPosition()"

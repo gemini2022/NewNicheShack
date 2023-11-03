@@ -1,0 +1,14 @@
+<div #listContainer
+     class="list-container">
+
+    <div *ngIf="loading" class="list-spinner">
+        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+    </div>
+
+    <div *ngFor="let listItem of list;">
+        <ns-image-list-item #listItemComponent
+                                [listItem]="listItem"
+                                (onMouseDown)="$event ? selectListItem($event) : null">
+        </ns-image-list-item>
+    </div>
+</div>

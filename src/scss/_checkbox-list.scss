@@ -1,0 +1,15 @@
+.checkbox-list-item {
+    @extend .list-item;
+
+    .checkbox-container {
+        margin-left: -1px;
+        padding-left: 1px;
+    }
+}
+
+
+
+.checkbox-list-item-text {
+    @extend .list-item-text;
+    padding-left: 0;
+}
