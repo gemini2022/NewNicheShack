@@ -281,8 +281,6 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
             listItemComponent.listItemElement.nativeElement.focus();
             this.setSelectedItems(listItemComponent);
         }
-        const editableListItemInEditMode = this.editableListItemComponents.find(x => x.inEditMode);
-        if (editableListItemInEditMode) editableListItemInEditMode.exitEditMode();
     }
 
 
@@ -307,7 +305,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
         if (!listItem) return;
         this.idsOfCurrentListItems = [];
         this.idOfEditedListItem = listItem.listItem.id;
-        listItem.setToEditMode();
+        listItem.enterEditMode();
     }
 
 
@@ -353,13 +351,13 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
     public setListItemsEnableState(isEnabled: boolean) {
-        this.editableListItemComponents.forEach(x => x.setEnableState(isEnabled));
+        this.editableListItemComponents.forEach(editableListItemComponent => editableListItemComponent.setEnableState(isEnabled));
     }
 
 
 
     protected override initializeListItemsInList(primarySelectedListItemIsBorderOnly?: boolean): void {
-        this.editableListItemComponents.forEach(x => x.initialize(primarySelectedListItemIsBorderOnly));
+        this.editableListItemComponents.forEach(editableListItemComponent => editableListItemComponent.initialize(primarySelectedListItemIsBorderOnly));
     }
 
 

@@ -3,6 +3,7 @@ import { CheckboxListItem } from '../checkbox-list-item';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { EditableListItemBase } from '../editable-list-item-base';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { ExitEditType } from '../enums';
 
 @Component({
   standalone: true,
@@ -12,5 +13,29 @@ import { CheckboxComponent } from '../checkbox/checkbox.component';
   styleUrls: ['./editable-checkbox-list-item.component.scss']
 })
 export class EditableCheckboxListItemComponent extends EditableListItemBase<CheckboxListItem> {
+  public isCheckboxEnabled: boolean = true;
+
   @Output() public checkboxChangedEvent: EventEmitter<CheckboxListItem> = new EventEmitter();
+  @Output() public setCheckboxListItemsCheckboxEnableState: EventEmitter<boolean> = new EventEmitter();
+
+
+
+  public override enterEditMode() {
+    super.enterEditMode();
+    this.setCheckboxListItemsCheckboxEnableState.emit(false);
+  }
+
+
+
+  public override exitEditMode(exitEditType?: ExitEditType) {
+    super.exitEditMode(exitEditType);
+    this.setCheckboxListItemsCheckboxEnableState.emit(true);
+  }
+
+
+
+  public override initialize(primarySelectedListItemIsBorderOnly?: boolean): void {
+    super.initialize(primarySelectedListItemIsBorderOnly);
+    this.isCheckboxEnabled = true;
+  }
 }

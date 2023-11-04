@@ -12,9 +12,10 @@ export class CheckboxComponent {
   // Inputs
   @Input() public label!: string;
   @Input() public isChecked!: boolean;
-  @Input() public isDisabled!: boolean;
   @Input() public spaceBetween!: boolean;
+  @Input() public isEnabled: boolean = true;
   @Input() public labelRight: boolean = true;
+  @Input() public disabledOpacity: number = 0.25;
 
   // Outputs
   @Output() public checkboxChangedEvent: EventEmitter<boolean> = new EventEmitter();
@@ -26,7 +27,7 @@ export class CheckboxComponent {
 
 
   public onCheckboxChange (): void {
-    if (!this.isDisabled) {
+    if (this.isEnabled) {
       this.isChecked = !this.isChecked;
       this.checkboxChangedEvent.emit(this.isChecked);
     }

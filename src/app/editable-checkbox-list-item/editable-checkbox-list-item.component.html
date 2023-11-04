@@ -16,7 +16,9 @@
      [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
      
      <div class="checkbox-component-container" (mousedown)="stopItemSelectionPropagation = true">
-          <ns-checkbox [isChecked]="listItem.isChecked"
+          <ns-checkbox [isEnabled]="isCheckboxEnabled"
+                       [isChecked]="listItem.isChecked"
+                       [disabledOpacity]="inEditMode ? 0.25 : 1"
                        (checkboxChangedEvent)="listItem.isChecked = $event; checkboxChangedEvent.emit(listItem)">
           </ns-checkbox>
      </div>

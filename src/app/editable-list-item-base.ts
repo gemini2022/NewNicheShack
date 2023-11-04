@@ -35,12 +35,12 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
   public identify() {
     this.isNew = true;
-    this.setToEditMode();
+    this.enterEditMode();
   }
 
 
 
-  public setToEditMode() {
+  public enterEditMode() {
     this.inEditMode = true;
     this.getTextCaretPosition();
     this.hasPrimarySelection = false;
@@ -51,31 +51,11 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  private selectRange() {
-    const listItemTextElement = this.listItemTextElement;
-
-    if (listItemTextElement && listItemTextElement.nativeElement) {
-      const firstChild = listItemTextElement.nativeElement.firstChild;
-
-      if (firstChild) {
-        const range = document.createRange();
-        range.selectNodeContents(firstChild);
-        const selection = window.getSelection();
-
-        if (selection) {
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
-      }
-    }
-  }
-
-
-
   public exitEditMode(exitEditType?: ExitEditType) {
     if (this.listItemTextElement.nativeElement.innerText.trim().length > 0) {
       exitEditType === ExitEditType.Escape ? this.cancelListItemEdit() : this.completeListItemEdit();
     } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit();
+    this.setListItemsEnableState.emit(true);
   }
 
 
@@ -116,13 +96,33 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
+  private selectRange() {
+    const listItemTextElement = this.listItemTextElement;
+
+    if (listItemTextElement && listItemTextElement.nativeElement) {
+      const firstChild = listItemTextElement.nativeElement.firstChild;
+
+      if (firstChild) {
+        const range = document.createRange();
+        range.selectNodeContents(firstChild);
+        const selection = window.getSelection();
+
+        if (selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      }
+    }
+  }
+
+
+
   public reselectItem(): void {
     this.isNew = false;
     this.inEditMode = false;
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
     this.listItemElement.nativeElement.focus();
-    this.setListItemsEnableState.emit(true);
   }
 
 

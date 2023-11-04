@@ -1,12 +1,12 @@
 <div class="checkbox-container"
      (click)="onCheckboxChange()"
-     [ngClass]="{'checkbox-disabled': isDisabled}"
-     [ngStyle]="{'justify-content': spaceBetween ? 'space-between' : 'flex-start'}">
+     [ngClass]="{'checkbox-disabled': !isEnabled}"
+     [ngStyle]="{'justify-content': spaceBetween ? 'space-between' : 'flex-start', 'opacity': isEnabled ? 1 : disabledOpacity}">
        
     <input tabindex="-1"
            type="checkbox"
            [checked]="isChecked"
-           [disabled]="isDisabled">
+           [disabled]="!isEnabled">
 
     <div *ngIf="label && !labelRight" class="checkbox-label">{{label}}</div>
 
