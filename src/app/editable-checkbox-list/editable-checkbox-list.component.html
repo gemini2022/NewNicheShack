@@ -14,11 +14,11 @@
                                         (onMouseDown)="selectListItem($event)"
                                         (reinitializeList)="reinitializeList()"
                                         (addedListItemEvent)="addedListItemEvent.emit($event)"
+                                        (editedListItemEvent)="editedListItemEvent.emit($event)"
                                         (removeNewListItemFromList)="removeNewListItemFromList()"
-                                        (setListItemsEnableState)="setListItemsEnableState($event)"
                                         (checkboxChangedEvent)="checkboxChangedEvent.emit($event)"
                                         (pastedListItemsEvent)="pastedListItemsEvent.emit($event)"
-                                        (editedListItemEvent)="editedListItemEvent.emit($event)"
+                                        (setListItemsEnableState)="setListItemsEnableState($event)"
                                         (stopMouseDownPropagation)="stopMouseDownPropagation = true">
         </ns-editable-checkbox-list-item>
     </div>

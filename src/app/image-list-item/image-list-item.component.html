@@ -4,15 +4,13 @@
      (mousedown)="onListItemDown($event)"
      (contextmenu)="$event.preventDefault()"
      [ngClass]="{'image-list-primary-selection': hasPrimarySelection && hasSecondarySelection,
-                 'image-list-secondary-selection-all': secondarySelectionType == SecondarySelectionType.All,
-                 'image-list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection}">
+                 'image-list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection,
+                 'image-list-secondary-selection-all': secondarySelectionType == SecondarySelectionType.All}">
      
-
      <div class="image-container">
           <img [src]="'images/' + listItem.image">
      </div>
      
-
      <div #listItemTextElement
           class="list-item-text"
           >{{listItem.text}}</div>

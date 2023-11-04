@@ -1,16 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { ListBase } from '../list-base';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ListComponent } from '../list/list.component';
-import { IconFontListItemComponent } from '../icon-font-list-item/icon-font-list-item.component';
 import { IconFontListItem } from '../icon-font-list-item';
+import { IconFontListItemComponent } from '../icon-font-list-item/icon-font-list-item.component';
 
 @Component({
-  selector: 'ns-icon-font-list',
   standalone: true,
-  imports: [CommonModule, IconFontListItemComponent],
+  selector: 'ns-icon-font-list',
   templateUrl: './icon-font-list.component.html',
-  styleUrls: ['./icon-font-list.component.scss']
+  styleUrls: ['./icon-font-list.component.scss'],
+  imports: [CommonModule, IconFontListItemComponent]
 })
-export class IconFontListComponent extends ListComponent { 
-  @Input() public override list: Array<IconFontListItem> = new Array<IconFontListItem>();
-}
+export class IconFontListComponent extends ListBase<IconFontListItem> { }

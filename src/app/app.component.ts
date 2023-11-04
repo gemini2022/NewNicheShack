@@ -65,11 +65,11 @@ export class AppComponent {
 
 
   ngOnInit() {
-    // this.dataService.get('api/List').subscribe(
-    //   (listItems: Array<ListItem>) => {
-    //     this.testList = listItems;
-    //   }
-    // )
+    this.dataService.get('api/List').subscribe(
+      (listItems: Array<ListItem>) => {
+        this.testList = listItems;
+      }
+    )
 
     this.dataService.get('api/ImageList').subscribe(
       (imageListItems: Array<ImageListItem>) => {
@@ -78,11 +78,11 @@ export class AppComponent {
     )
 
 
-    // this.dataService.get('api/CheckboxList').subscribe(
-    //   (checkboxListItems: Array<CheckboxListItem>) => {
-    //     this.checkboxList = checkboxListItems;
-    //   }
-    // )
+    this.dataService.get('api/CheckboxList').subscribe(
+      (checkboxListItems: Array<CheckboxListItem>) => {
+        this.checkboxList = checkboxListItems;
+      }
+    )
   }
 
 
@@ -173,7 +173,7 @@ export class AppComponent {
 
 
 
-  onCheckboxListItemEdited(checkboxListItem: ListItem) {
+  onCheckboxListItemEdited(checkboxListItem: CheckboxListItem) {
     this.dataService.put('api/CheckboxList', {
       id: checkboxListItem.id,
       text: checkboxListItem.text

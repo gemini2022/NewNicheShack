@@ -1,49 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ListItem } from '../list-item';
-import { SecondarySelectionType } from '../enums';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ListItemBase } from '../list-item-base';
 
 @Component({
-  selector: 'ns-list-item',
   standalone: true,
   imports: [CommonModule],
+  selector: 'ns-list-item',
   templateUrl: './list-item.component.html',
   styleUrls: ['./list-item.component.scss']
 })
-export class ListItemComponent {
-  protected stopItemSelectionPropagation: boolean = false;
-
-  // Public
-  public hasPrimarySelection: boolean = false;
-  public hasSecondarySelection: boolean = false;
-  public hasPrimarySelectionBorderOnly: boolean = false;
-  public SecondarySelectionType = SecondarySelectionType;
-  public secondarySelectionType: SecondarySelectionType | undefined | null;
-
-  // Input
-  @Input() public listItem: ListItem = new ListItem('', '');
-
-  // Output
-  @Output() public onMouseDown: EventEmitter<ListItem> = new EventEmitter();
-
-  // View Child
-  @ViewChild('listItemElement') public listItemElement!: ElementRef<HTMLElement>;
-
- 
-
-  protected onListItemDown(e: MouseEvent) {
-    if (this.stopItemSelectionPropagation) {
-      this.stopItemSelectionPropagation = false;
-      return
-    }
-    this.onMouseDown.emit(this.listItem);
-  }
-
-
-
-  public initialize(primarySelectedListItemIsBorderOnly?: boolean) {
-    this.hasPrimarySelection = false;
-    this.secondarySelectionType = null;
-    if (!primarySelectedListItemIsBorderOnly) this.hasSecondarySelection = false;
-  }
-}
+export class ListItemComponent extends ListItemBase<ListItem> { }

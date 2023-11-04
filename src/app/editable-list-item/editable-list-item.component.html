@@ -8,9 +8,9 @@
                  'disabled-list-item': !isEnabled,
                  'unselected-list-item': hasUnselection,
                  'list-primary-selection': hasPrimarySelection && hasSecondarySelection,
+                 'list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection,
                  'list-secondary-selection-all': secondarySelectionType == SecondarySelectionType.All,
                  'list-secondary-selection-top': secondarySelectionType == SecondarySelectionType.Top,
-                 'list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection,
                  'list-secondary-selection-middle': secondarySelectionType == SecondarySelectionType.Middle,
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
      [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
