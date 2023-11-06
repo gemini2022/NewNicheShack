@@ -12,15 +12,11 @@ import { EditableCheckboxListItemComponent } from '../editable-checkbox-list-ite
   imports: [CommonModule, EditableCheckboxListItemComponent]
 })
 export class EditableCheckboxListComponent extends EditableListBase<CheckboxListItem> {
-  // Outputs
   @Output() public checkboxChangedEvent: EventEmitter<CheckboxListItem> = new EventEmitter();
-
-  // View Children
   @ViewChildren('listItemComponent') protected editableCheckboxListItemComponents: QueryList<EditableCheckboxListItemComponent> = new QueryList<EditableCheckboxListItemComponent>();
 
 
-
-  public setCheckboxListItemsCheckboxEnableState(isEnabled: boolean) {
+  protected setCheckboxListItemsCheckboxEnableState(isEnabled: boolean) {
     this.editableCheckboxListItemComponents.forEach(x => x.isCheckboxEnabled = isEnabled);
   }
 }

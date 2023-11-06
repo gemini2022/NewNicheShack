@@ -1,0 +1,9 @@
+<div class="hierarchy-arrow-container"
+     (mousedown)="onArrowChange()"
+     [ngClass]="{'arrow-disabled': !isEnabled}"
+     [ngStyle]="{'opacity': isEnabled ? 1 : disabledOpacity}">
+
+    <div class="hierarchy-arrow"
+         [ngClass]="{'hierarchy-arrow-down': isArrowDown}">
+    </div>
+</div>

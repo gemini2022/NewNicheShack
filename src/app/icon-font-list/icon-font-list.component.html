@@ -5,9 +5,9 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let listItem of list;">
+    <div *ngFor="let iconFontListItem of list;">
         <ns-icon-font-list-item #listItemComponent
-                                [listItem]="listItem"
+                                [listItem]="iconFontListItem"
                                 (onMouseDown)="$event ? selectListItem($event) : null">
         </ns-icon-font-list-item>
     </div>

@@ -19,14 +19,12 @@ export class CheckboxComponent {
 
   // Outputs
   @Output() public checkboxChangedEvent: EventEmitter<boolean> = new EventEmitter();
-  
 
   // View Child
   @ViewChild('tabElement') public tabElement!: ElementRef<HTMLElement>;
 
 
-
-  public onCheckboxChange (): void {
+  protected onCheckboxChange (): void {
     if (this.isEnabled) {
       this.isChecked = !this.isChecked;
       this.checkboxChangedEvent.emit(this.isChecked);

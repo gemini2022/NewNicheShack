@@ -1,0 +1,40 @@
+.hierarchy-arrow-container {
+    display: flex;
+    cursor: default;
+    user-select: none;
+    align-items: center;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    height: $list-item-height;
+    padding-left: $list-indent;
+    width: $list-indent + $hierarchy-arrow-width + $hierarchy-arrow-margin-right;
+
+    &:hover:not(.arrow-disabled) {
+        .hierarchy-arrow {
+            border-left-color: $hierarchy-arrow-hover-color;
+        }
+
+        .hierarchy-arrow-down {
+            border-left-color: transparent;
+            border-top-color: $hierarchy-arrow-hover-color;
+        }
+    }
+}
+
+
+
+.hierarchy-arrow {
+    border-top: calc($hierarchy-arrow-height / 2) solid transparent;
+    border-left: $hierarchy-arrow-width solid $hierarchy-arrow-color;
+    border-bottom: calc($hierarchy-arrow-height / 2) solid transparent;
+}
+
+
+
+.hierarchy-arrow-down {
+    border-bottom: transparent;
+    border-top: $hierarchy-arrow-width solid $hierarchy-arrow-color;
+    border-left: calc($hierarchy-arrow-height / 2) solid transparent;
+    border-right: calc($hierarchy-arrow-height / 2) solid transparent;
+}

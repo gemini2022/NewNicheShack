@@ -3,8 +3,6 @@ import { Directive, ElementRef, EventEmitter, Input, Output, ViewChild } from "@
 
 @Directive()
 export class ListItemBase<T> {
-    protected stopItemSelectionPropagation: boolean = false;
-
   // Public
   public hasPrimarySelection: boolean = false;
   public hasSecondarySelection: boolean = false;
@@ -21,13 +19,9 @@ export class ListItemBase<T> {
   // View Child
   @ViewChild('listItemElement') public listItemElement!: ElementRef<HTMLElement>;
 
- 
+
 
   protected onListItemDown(e: MouseEvent) {
-    if (this.stopItemSelectionPropagation) {
-      this.stopItemSelectionPropagation = false;
-      return
-    }
     this.onMouseDown.emit(this.listItem);
   }
 

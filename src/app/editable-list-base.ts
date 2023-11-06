@@ -338,7 +338,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    public onTrackBy(index: number, listItem: T): any {
+    protected onTrackBy(index: number, listItem: T): any {
         return listItem.id;
     }
 

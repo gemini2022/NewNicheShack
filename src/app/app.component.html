@@ -38,7 +38,7 @@
                         (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
       </ns-editable-list> -->
 
-      <ns-editable-checkbox-list #list
+      <!-- <ns-editable-checkbox-list #list
                                  [list]="checkboxList"
                                  [noSelectOnArrowKey]="false"
                                  (addedListItemEvent)="onCheckboxListItemAdded($event)"
@@ -47,7 +47,23 @@
                                  (checkboxChangedEvent)="onCheckboxChanged($event)"
                                  (deletedListItemsEvent)="onDeletedListItems($event)"
                                  (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
-      </ns-editable-checkbox-list>
+      </ns-editable-checkbox-list> -->
+
+
+      <ns-editable-hierarchy-list #list
+                                  [list]="testList"
+                                  [noSelectOnArrowKey]="false"
+                                  (addedListItemEvent)="onListItemAdded($event)"
+                                  (selectedItemsEvent)="onSelectedItems($event)"
+                                  (editedListItemEvent)="onListItemEdited($event)"
+                                  (pastedListItemsEvent)="onPastedListItems($event)"
+                                  (deletedListItemsEvent)="onDeletedListItems($event)"
+                                  (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
+      </ns-editable-hierarchy-list>
+
+
+
+      
 
     </div>
   </div>
@@ -68,6 +84,3 @@
 
   
 </div>
-
-
-<ns-checkbox [label]="'This is the checkbox label'"></ns-checkbox>

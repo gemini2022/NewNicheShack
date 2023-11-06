@@ -9,6 +9,8 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
     // Private
   private textCaretPosition!: Selection;
   protected listPasted: boolean = false;
+  protected stopListItemSelectionPropagation: boolean = false;
+  protected stopListItemDoubleClickPropagation: boolean = false;
 
   // Public
   public isNew: boolean = false;
@@ -248,9 +250,23 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
       if (e.button == rightMouseButton) console.log('right click')
 
       if (!(e.button === rightMouseButton && this.hasSecondarySelection)) {
+        if (this.stopListItemSelectionPropagation) {
+          this.stopListItemSelectionPropagation = false;
+          return
+        }
         super.onListItemDown(e);
       }
     }
+  }
+
+
+
+  protected onListItemDoubleClick() {
+    if (this.stopListItemDoubleClickPropagation) {
+      this.stopListItemDoubleClickPropagation = false;
+      return
+    }
+    this.onDoubleClick.emit();
   }
 
 

@@ -14,21 +14,20 @@
                  'list-secondary-selection-middle': secondarySelectionType == SecondarySelectionType.Middle,
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
      [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
-     
-     <div class="checkbox-component-container"
+
+     <div class="hierarchy-arrow-component-container"
           (mousedown)="stopListItemSelectionPropagation = true"
           (dblclick)="stopListItemDoubleClickPropagation = true">
           
-          <ns-checkbox [isEnabled]="isCheckboxEnabled"
-                       [isChecked]="listItem.isChecked"
-                       [disabledOpacity]="inEditMode ? 0.25 : 1"
-                       (checkboxChangedEvent)="listItem.isChecked = $event; checkboxChangedEvent.emit(listItem)">
-          </ns-checkbox>
+          <ns-hierarchy-arrow [isEnabled]="isArrowEnabled"
+                              [disabledOpacity]="inEditMode ? 0.25 : 1"
+                              (arrowChangedEvent)="arrowChangedEvent.emit($event)">
+          </ns-hierarchy-arrow>
      </div>
-
+     
      <div #listItemTextElement
           (paste)="onPaste($event)"
-          class="checkbox-list-item-text"
+          class="hierarchy-list-item-text"
           (keydown)="getTextCaretPosition()"
           (mouseup)="getTextCaretPosition()"
           (mousedown)="getTextCaretPosition()"

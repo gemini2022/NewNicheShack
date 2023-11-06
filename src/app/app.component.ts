@@ -11,11 +11,22 @@ import { IconFontListItem } from './icon-font-list-item';
 import { CheckboxListItem } from './checkbox-list-item';
 import { ImageListItem } from './image-list-item';
 import { ImageListComponent } from './image-list/image-list.component';
+import { EditableHierarchyListComponent } from './editable-hierarchy-list/editable-hierarchy-list.component';
+import { HierarchyArrowComponent } from './hierarchy-arrow/hierarchy-arrow.component';
 
 @Component({
   selector: 'ns-root',
   standalone: true,
-  imports: [CommonModule, ListComponent, CheckboxComponent, EditableCheckboxListComponent, EditableListComponent, IconFontListComponent, ImageListComponent],
+  imports: [CommonModule,
+            ListComponent,
+            CheckboxComponent,
+            EditableCheckboxListComponent,
+            EditableListComponent,
+            IconFontListComponent,
+            ImageListComponent,
+            EditableHierarchyListComponent,
+            HierarchyArrowComponent
+          ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

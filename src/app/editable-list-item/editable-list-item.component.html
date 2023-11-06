@@ -1,6 +1,6 @@
 <div #listItemElement
      class="list-item"
-     (dblclick)="onDoubleClick.emit()"
+     (dblclick)="onListItemDoubleClick()"
      (mousedown)="onListItemDown($event)"
      [tabindex]="!inEditMode ? '-1' : null"
      (contextmenu)="$event.preventDefault()"
