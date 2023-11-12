@@ -5,7 +5,7 @@ import { Directive, EventEmitter, Input, Output, QueryList, Renderer2, ViewChild
 
 @Directive()
 export abstract class ListBase<T extends ListItem> {
-    // Private
+  // Private
   protected loading: boolean = true;
   protected renderer = inject(Renderer2);
   protected removeKeydownListener!: () => void;
@@ -23,11 +23,13 @@ export abstract class ListBase<T extends ListItem> {
   @ViewChildren('listItemComponent') protected listItemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
 
 
-  
+
   protected ngOnChanges(changes: any): void {
-    if((changes.list.isFirstChange() && this.loading && this.list.length > 0) || (!changes.list.isFirstChange() && this.loading)) {
-      this.loading = false
-    } 
+    if (changes.list) {
+      if ((changes.list.isFirstChange() && this.loading && this.list.length > 0) || (!changes.list.isFirstChange() && this.loading)) {
+        this.loading = false
+      }
+    }
   }
 
 

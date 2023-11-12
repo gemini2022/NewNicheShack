@@ -1,5 +1,6 @@
 <div #listItemElement
      class="list-item"
+     *ngIf="!isHidden"
      (dblclick)="onListItemDoubleClick()"
      (mousedown)="onListItemDown($event)"
      [tabindex]="!inEditMode ? '-1' : null"
@@ -15,13 +16,16 @@
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
      [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
 
-     <div class="hierarchy-arrow-component-container"
+     <div [style.paddingLeft.px]="listItem.tier * 35"
+          class="hierarchy-arrow-component-container"
           (mousedown)="stopListItemSelectionPropagation = true"
           (dblclick)="stopListItemDoubleClickPropagation = true">
           
           <ns-hierarchy-arrow [isEnabled]="isArrowEnabled"
+                              [isArrowDown]="isArrowDown"
                               [disabledOpacity]="inEditMode ? 0.25 : 1"
-                              (arrowChangedEvent)="arrowChangedEvent.emit($event)">
+                              *ngIf="listItem.tier == 0 || listItem.isParent"
+                              (arrowChangedEvent)="isArrowDown = $event; arrowChangedEvent.emit(this)">
           </ns-hierarchy-arrow>
      </div>
      

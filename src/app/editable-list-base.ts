@@ -20,7 +20,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     public stopMouseDownPropagation: boolean = false;
 
     // Inputs
-    @Input() public isMultiselectable: boolean = true;    
+    @Input() public isMultiselectable: boolean = true;
 
     // Events
     @Output() public editedListItemEvent: EventEmitter<T> = new EventEmitter();
@@ -310,6 +310,19 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
+    protected onEditedListItem(listItem: T) {
+        const editableListItemInEditMode = this.editableListItemComponents.find(x => x.inEditMode);
+        if (editableListItemInEditMode) {
+            if (editableListItemInEditMode.listItem.text != listItem.text) {
+                this.editedListItemEvent.emit(({ id: listItem.id, text: listItem.text } as T));
+            } else {
+                this.autoselectEditedListItem();
+            }
+        }
+    }
+
+
+
     public deleteListItems(): void {
         if (this.editableListItemComponents.find(x => x.inEditMode)) return;
         const selectedListItems = this.editableListItemComponents.filter(x => x.hasSecondarySelection);
@@ -332,7 +345,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    public onInput(text: string) {
+    protected onInput(text: string) {
         if (this.list.some(listItem => listItem.text === text)) console.log('Duplicate Found');
     }
 
@@ -344,13 +357,13 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    public removeNewListItemFromList() {
+    protected removeNewListItemFromList() {
         this.list.shift();
     }
 
 
 
-    public setListItemsEnableState(isEnabled: boolean) {
+    protected setListItemsEnableState(isEnabled: boolean) {
         this.editableListItemComponents.forEach(editableListItemComponent => editableListItemComponent.setEnableState(isEnabled));
     }
 
@@ -362,7 +375,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    public reinitializeList(): void {
+    protected reinitializeList(): void {
         this.removeKeyupListener();
         this.removeKeydownListener();
         this.removeMousedownListener();

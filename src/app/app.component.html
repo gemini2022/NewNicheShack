@@ -5,6 +5,7 @@
 </div>
 
 
+<button style="margin-right: 20px;" (click)="hierarchyListComponent.collapseHierarchy()" (mousedown)="hierarchyListComponent.stopMouseDownPropagation = true">Collapse Hierarchy</button>
 
 <div style="display: flex; padding: 20px;">
 
@@ -50,15 +51,12 @@
       </ns-editable-checkbox-list> -->
 
 
-      <ns-editable-hierarchy-list #list
-                                  [list]="testList"
-                                  [noSelectOnArrowKey]="false"
-                                  (addedListItemEvent)="onListItemAdded($event)"
-                                  (selectedItemsEvent)="onSelectedItems($event)"
-                                  (editedListItemEvent)="onListItemEdited($event)"
-                                  (pastedListItemsEvent)="onPastedListItems($event)"
-                                  (deletedListItemsEvent)="onDeletedListItems($event)"
-                                  (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
+      <ns-editable-hierarchy-list #hierarchyListComponent
+                                  [list]="hierarchyList"
+                                  [children]="hierarchyChildren"
+                                  (hierarchyChildrenRequestedEvent)="onHierarchyChildrenRequested($event)"
+                                  (hierarchyCollapseStateUpdatedEvent)="onHierarchyCollapseStateUpdated($event)"
+                                  >
       </ns-editable-hierarchy-list>
 
 
