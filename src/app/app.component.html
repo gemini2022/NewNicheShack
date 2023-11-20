@@ -1,84 +1,43 @@
-<div style="display: flex; margin: 15px 0 30px 5px;">
-  <button style="margin-right: 20px;" (click)="onAddListItemButtonClick()" (mousedown)="listComponent.stopMouseDownPropagation = true">Add List Item</button>
-  <button style="margin-right: 20px;" (click)="onEditListItemButtonClick()" (mousedown)="listComponent.stopMouseDownPropagation = true">Edit List Item</button>
-  <button style="margin-right: 20px; user-select: none;" (click)="listComponent.getListItemsToBeDeleted()" (mousedown)="listComponent.stopMouseDownPropagation = true">Delete List Item</button>
-</div>
-
-
-<button style="margin-right: 20px;" (click)="hierarchyListComponent.collapseHierarchy()" (mousedown)="hierarchyListComponent.stopMouseDownPropagation = true">Collapse Hierarchy</button>
-
 <div style="display: flex; padding: 20px;">
 
-  <div style="background: #282828; padding: 10px; border: 1px solid #414141; border-radius: 4px; margin-right: 100px;">
-    <div style="width: 300px; height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
-      
-      <!-- <ns-list #list
-               [list]="testList"
-               [noSelectOnArrowKey]="true"
-               (selectedItemsEvent)="onSelectedItems($event)">
-      </ns-list> -->
+  <!-- List -->
+  <div style="width: 320px; margin-right: 50px;">
+    <div style="display: flex; margin-bottom: 15px; justify-content: space-between;">
+      <button (click)="list.add()" (mousedown)="list.stopMouseDownPropagation = true">Add Item</button>
+      <button (click)="list.edit()" (mousedown)="list.stopMouseDownPropagation = true">Edit Item</button>
+      <button (click)="deleteListItems()" (mousedown)="list.stopMouseDownPropagation = true">Delete Item</button>
+    </div>
 
-
-
-      <!-- <ns-image-list #list
-               [list]="imageList"
-               [noSelectOnArrowKey]="true"
-               (selectedItemsEvent)="onSelectedItems($event)">
-      </ns-image-list> -->
-
-      
-
-      <!-- <ns-editable-list #list
-                        [list]="testList"
-                        [noSelectOnArrowKey]="false"
-                        (addedListItemEvent)="onListItemAdded($event)"
-                        (selectedItemsEvent)="onSelectedItems($event)"
-                        (editedListItemEvent)="onListItemEdited($event)"
-                        (pastedListItemsEvent)="onPastedListItems($event)"
-                        (deletedListItemsEvent)="onDeletedListItems($event)"
-                        (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
-      </ns-editable-list> -->
-
-      <!-- <ns-editable-checkbox-list #list
-                                 [list]="checkboxList"
-                                 [noSelectOnArrowKey]="false"
-                                 (addedListItemEvent)="onCheckboxListItemAdded($event)"
-                                 (editedListItemEvent)="onCheckboxListItemEdited($event)"
-                                 (pastedListItemsEvent)="onPastedListItems($event)"
-                                 (checkboxChangedEvent)="onCheckboxChanged($event)"
-                                 (deletedListItemsEvent)="onDeletedListItems($event)"
-                                 (listItemsToBeDeletedEvent)="onListItemsToBeDeleted($event)">
-      </ns-editable-checkbox-list> -->
-
-
-      <ns-editable-hierarchy-list #hierarchyListComponent
-                                  [list]="hierarchyList"
-                                  [children]="hierarchyChildren"
-                                  (hierarchyChildrenRequestedEvent)="onHierarchyChildrenRequested($event)"
-                                  (hierarchyCollapseStateUpdatedEvent)="onHierarchyCollapseStateUpdated($event)"
-                                  >
-      </ns-editable-hierarchy-list>
-
-
-
-      
-
+    <div style="background: #282828; padding: 10px; border: 1px solid #414141; border-radius: 4px;">
+      <div style="height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
+        
+        <ns-editable-list #list
+                          (selectedItemsEvent)="onSelectedListItems($event)">
+        </ns-editable-list>
+      </div>
     </div>
   </div>
 
+  <!-- Hierarchy -->
+  <div style="width: 320px;">
+    <div style="display: flex; margin-bottom: 10px; justify-content: space-around; padding: 0 12px 0 12px;">
+      <button (click)="hierarchy.add()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Niche</button>
+      <button (click)="hierarchy.add(1, true)" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Subniche</button>
+      <button (click)="hierarchy.add(2)" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Product</button>
+    </div>
+    <div style="display: flex; margin-bottom: 10px; justify-content: space-around; padding: 0 74px 0 74px;">
+      <button (click)="hierarchy.edit()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Edit Item</button>
+      <button (click)="deleteHierarchyItems()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Delete Item</button>
+    </div>
 
-  
-
-
-  <!-- <div style="width: 164px; height: 186px; margin-right: 100px;  background: rgba(22, 22, 22, 0.945); border-radius: 5px; border: 1px solid #424242; padding: 2px;">
-    <ns-icon-font-list #list
-                       [list]="iconFontList"
-                       [noSelectOnArrowKey]="true"
-                       (selectedItemsEvent)="onSelectedItems($event)">
-    </ns-icon-font-list>
-  </div> -->
-
-
-
-  
+    <div style="background: #282828; padding: 10px; border: 1px solid #414141; border-radius: 4px;">
+      <div style="height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
+        
+        <ns-editable-hierarchy-list #hierarchy
+                                    (selectedItemsEvent)="onSelectedHierarchyItems($event)"
+                                    (hierarchyCollapseStateUpdatedEvent)="onHierarchyCollapseStateUpdated($event)">
+        </ns-editable-hierarchy-list>
+      </div>
+    </div>
+  </div>
 </div>

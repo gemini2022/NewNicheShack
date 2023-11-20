@@ -1,23 +1,25 @@
 <div #listContainer
      class="list-container"
+     [ngClass]="{'loading': loading}"
      (mousedown)="$event.clientX - listContainer.getBoundingClientRect().left >= listContainer.clientWidth ? stopMouseDownPropagation = true : null">
 
     <div *ngIf="loading" class="list-spinner">
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let editableHierarchyListItem of list; trackBy:onTrackBy">
+    <div *ngFor="let editableHierarchyListItem of list">
         <ns-editable-hierarchy-list-item #listItemComponent
+                                         (onDoubleClick)="edit()"
                                          (onInput)="onInput($event)"
-                                         (onDoubleClick)="editListItem()"
+                                         (showSpinner)="loading = true"
+                                         (addedItemEvent)="onItemAdded($event)"
                                          [listItem]="editableHierarchyListItem"
                                          (onMouseDown)="selectListItem($event)"
                                          (reinitializeList)="reinitializeList()"
+                                         (addedItemsEvent)="onItemsAdded($event)"
+                                         (editedItemEvent)="onItemEdited($event)"
                                          (arrowChangedEvent)="onArrowChange($event)"
-                                         (editedListItemEvent)="onEditedListItem($event)"
-                                         (addedListItemEvent)="addedListItemEvent.emit($event)"
                                          (removeNewListItemFromList)="removeNewListItemFromList()"
-                                         (pastedListItemsEvent)="pastedListItemsEvent.emit($event)"
                                          (setListItemsEnableState)="setListItemsEnableState($event)"
                                          (stopMouseDownPropagation)="stopMouseDownPropagation = true"
                                          (setHierarchyListItemsArrowEnableState)="setHierarchyListItemsArrowEnableState($event)">

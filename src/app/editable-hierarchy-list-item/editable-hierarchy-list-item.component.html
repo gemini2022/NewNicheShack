@@ -24,7 +24,7 @@
           <ns-hierarchy-arrow [isEnabled]="isArrowEnabled"
                               [isArrowDown]="isArrowDown"
                               [disabledOpacity]="inEditMode ? 0.25 : 1"
-                              *ngIf="listItem.tier == 0 || listItem.isParent"
+                              *ngIf="listItem.tier === 0 || listItem.isParent"
                               (arrowChangedEvent)="isArrowDown = $event; arrowChangedEvent.emit(this)">
           </ns-hierarchy-arrow>
      </div>

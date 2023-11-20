@@ -2,18 +2,22 @@ import { ListItem } from "./list-item";
 import { SecondarySelectionType } from "./enums";
 import { ListItemComponent } from "./list-item/list-item.component";
 import { Directive, EventEmitter, Input, Output, QueryList, Renderer2, ViewChildren, inject } from "@angular/core";
+import { Observable, take } from "rxjs";
 
 @Directive()
 export abstract class ListBase<T extends ListItem> {
   // Private
   protected loading: boolean = true;
   protected renderer = inject(Renderer2);
+  protected list: Array<T> = new Array<T>();
   protected removeKeydownListener!: () => void;
   protected eventListenersAdded: boolean = false;
 
+  // Public
+  public getItems!: () => Observable<Array<T>>;
+
   // Inputs
   @Input() public loopSelection: boolean = true;
-  @Input() public list: Array<T> = new Array<T>();
   @Input() public noSelectOnArrowKey: boolean = false;
 
   // Events
@@ -24,13 +28,22 @@ export abstract class ListBase<T extends ListItem> {
 
 
 
-  protected ngOnChanges(changes: any): void {
-    if (changes.list) {
-      if ((changes.list.isFirstChange() && this.loading && this.list.length > 0) || (!changes.list.isFirstChange() && this.loading)) {
-        this.loading = false
+  private ngOnInit() {
+    const loadListener = setInterval(() => {
+      if (this.getItems != null) {
+        clearInterval(loadListener);
+        this.getItems()
+          .pipe(take(1))
+          .subscribe(x => {
+            if (this.loading) {
+              this.loading = false
+              this.list = x;
+            }
+          })
       }
-    }
+    })
   }
+
 
 
   protected addEventListeners(): void {

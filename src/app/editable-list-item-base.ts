@@ -6,7 +6,8 @@ import { EditableListItemComponent } from "./editable-list-item/editable-list-it
 
 @Directive()
 export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
-    // Private
+  // Private
+  private itemAdded: boolean = false;
   private textCaretPosition!: Selection;
   protected listPasted: boolean = false;
   protected stopListItemSelectionPropagation: boolean = false;
@@ -21,14 +22,15 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
   // Output
   @Output() public onInput: EventEmitter<string> = new EventEmitter();
+  @Output() public showSpinner: EventEmitter<void> = new EventEmitter();
   @Output() public onDoubleClick: EventEmitter<void> = new EventEmitter();
   @Output() public reinitializeList: EventEmitter<void> = new EventEmitter();
-  @Output() public editedListItemEvent: EventEmitter<T> = new EventEmitter();
-  @Output() public addedListItemEvent: EventEmitter<string> = new EventEmitter();
+  @Output() public editedItemEvent: EventEmitter<T> = new EventEmitter();
+  @Output() public addedItemEvent: EventEmitter<string> = new EventEmitter();
   @Output() public stopMouseDownPropagation: EventEmitter<void> = new EventEmitter();
   @Output() public removeNewListItemFromList: EventEmitter<void> = new EventEmitter();
   @Output() public setListItemsEnableState: EventEmitter<boolean> = new EventEmitter();
-  @Output() public pastedListItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
+  @Output() public addedItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
 
   // View Child
   @ViewChild('listItemTextElement') protected listItemTextElement!: ElementRef<HTMLElement>;
@@ -74,7 +76,7 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
         setTimeout(() => {
           listItemTextElement.nativeElement.innerText = this.listItem.text;
-          this.reselectItem();
+          this.select();
         });
       }
     }
@@ -83,17 +85,27 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
   private completeListItemEdit(): void {
-    const text = this.listItemTextElement.nativeElement.innerText.trim();
-    this.listItemTextElement.nativeElement.innerText = '';
-
-    setTimeout(() => {
-      this.listItemTextElement.nativeElement.innerText = text;
-      if (this.isNew) {
-        this.listPasted ? this.pastedListItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedListItemEvent.emit(this.listItemTextElement.nativeElement.innerText);
-      } else {
-        this.editedListItemEvent.emit(({id: this.listItem.id, text: this.listItemTextElement.nativeElement.innerText} as T));
+    if (this.isNew) {
+      this.showSpinner.emit();
+      if (!this.itemAdded) {
+        this.itemAdded = true;
+        this.listPasted ? this.addedItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedItemEvent.emit(this.listItemTextElement.nativeElement.innerText);
       }
-    });
+
+    } else {
+      const text = this.listItemTextElement.nativeElement.innerText.trim();
+      this.listItemTextElement.nativeElement.innerText = '';
+
+      setTimeout(() => {
+        this.listItemTextElement.nativeElement.innerText = text;
+        if (this.listItem.text != text) {
+          this.showSpinner.emit();
+          this.editedItemEvent.emit(({ id: this.listItem.id, text: text } as T));
+        } else {
+          this.select();
+        }
+      })
+    }
   }
 
 
@@ -119,7 +131,7 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  public reselectItem(): void {
+  public select(): void {
     this.isNew = false;
     this.inEditMode = false;
     this.hasPrimarySelection = true;
