@@ -1,4 +1,4 @@
-import { ExitEditType } from '../enums';
+import { CaseType, ExitEditType } from '../enums';
 import { CommonModule } from '@angular/common';
 import { CheckboxListItem } from '../checkbox-list-item';
 import { Component, EventEmitter, Output } from '@angular/core';
@@ -18,8 +18,8 @@ export class EditableCheckboxListItemComponent extends EditableListItemBase<Chec
   @Output() public setCheckboxListItemsCheckboxEnableState: EventEmitter<boolean> = new EventEmitter();
 
 
-  public override enterEditMode() {
-    super.enterEditMode();
+  public override enterEditMode(caseType: CaseType) {
+    super.enterEditMode(caseType);
     this.setCheckboxListItemsCheckboxEnableState.emit(false);
   }
 

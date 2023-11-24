@@ -1,6 +1,6 @@
 import { ListItem } from "./list-item";
 import { ListBase } from "./list-base";
-import { ExitEditType } from "./enums";
+import { CaseType, ExitEditType } from "./enums";
 import { Directive, EventEmitter, Input, Output, QueryList } from "@angular/core";
 import { EditableListItemComponent } from "./editable-list-item/editable-list-item.component";
 import { Observable, take } from "rxjs";
@@ -15,14 +15,15 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     private editableListItemComponents!: QueryList<EditableListItemComponent>;
 
     // Public
-    public putItem!: (item: T) => Observable<T>;
+    public putItem!: (item: T) => Observable<void>;
     public stopMouseDownPropagation: boolean = false;
-    public postItem!: (text: string) => Observable<T>;
-    public deleteItems!: (ids: Array<number>) => Observable<void>;
+    public postItem!: (text: string) => Observable<any>;
+    public deleteItems!: (items: Array<T>) => Observable<void>;
     public postItems!: (texts: Array<string>) => Observable<Array<T>>;
 
     // Inputs
     @Input() public isMultiselectable: boolean = true;
+    @Input() public caseType: CaseType = CaseType.None;
 
     // Events
     @Output() public inputTypedEvent: EventEmitter<string> = new EventEmitter();
@@ -214,7 +215,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
         this.initializeListItemsInList();
         this.stopMouseDownPropagation = false;
         this.list.unshift({ id: '', text: '' } as T);
-        setTimeout(() => this.editableListItemComponents.first.identify());
+        setTimeout(() => this.editableListItemComponents.first.identify(this.caseType));
     }
 
 
@@ -222,11 +223,11 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     protected onItemAdded(text: string) {
         this.postItem(text)
             .pipe(take(1))
-            .subscribe((newItem: T) => {
+            .subscribe((id: any) => {
                 this.loading = false;
-                this.list.push(newItem);
-                this.removeNewListItemFromList();
-                this.list.sort((a, b) => a.text.localeCompare(b.text));
+                const newItem = { id: id, text: text } as T;
+                this.list.splice(0, 1, newItem);
+                this.sort();
 
                 setTimeout(() => {
                     const newItemComponent = this.editableListItemComponents.find(itemComponent => itemComponent.listItem === newItem);
@@ -246,7 +247,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
                     this.list.push(newItem);
                 })
                 this.removeNewListItemFromList();
-                this.list.sort((a, b) => a.text.localeCompare(b.text));
+                this.sort();
 
                 let editableListItemComponent: EditableListItemComponent;
                 setTimeout(() => {
@@ -270,19 +271,17 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     public edit(): void {
         const listItem = this.editableListItemComponents.find(x => x.hasPrimarySelection);
         if (!listItem) return;
-        listItem.enterEditMode();
+        listItem.enterEditMode(this.caseType);
     }
 
 
 
-    protected onItemEdited(item: T) {
-        this.putItem(item)
+    protected onItemEdited(editedItem: T) {
+        this.putItem(editedItem)
             .pipe(take(1))
-            .subscribe((editedItem: T) => {
+            .subscribe(() => {
                 this.loading = false;
-                this.list = this.list.filter(x => x.id != item.id);
-                this.list.push(editedItem);
-                this.list.sort((a, b) => a.text.localeCompare(b.text));
+                this.sort(editedItem);
 
                 setTimeout(() => {
                     const editedItemComponent = this.editableListItemComponents.find(itemComponent => itemComponent.listItem === editedItem);
@@ -295,16 +294,30 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
     public delete(): void {
         if (this.editableListItemComponents.find(x => x.inEditMode)) return;
-        const selectedListItems = this.editableListItemComponents.filter(x => x.hasSecondarySelection);
-        if (selectedListItems.length == 0) return;
 
-        const indexOfPrimarySelectedListItem = this.editableListItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
-        const nextListComponent = indexOfPrimarySelectedListItem !== -1 ? this.editableListItemComponents.toArray().slice(indexOfPrimarySelectedListItem + 1).find(x => !x.hasSecondarySelection) : null;
-        if (nextListComponent) this.selectListItem(nextListComponent.listItem as T);
+        const idsOfItemsToDelete = this.editableListItemComponents.filter(x => x.hasSecondarySelection).map(x => x.listItem.id);
+        if (idsOfItemsToDelete.length == 0) return;
 
-        const idsOfListItemsToBeDeleted = selectedListItems.map(x => x.listItem.id);
-        this.deleteItems(idsOfListItemsToBeDeleted).pipe(take(1)).subscribe();
-        this.list = this.list.filter(item => !idsOfListItemsToBeDeleted.includes(item.id));
+        this.loading = true;
+        const indexOfPrimarySelectedItem = this.editableListItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
+        const nextItem = indexOfPrimarySelectedItem !== -1 ? this.editableListItemComponents.toArray().slice(indexOfPrimarySelectedItem + 1).find(x => !x.hasSecondarySelection) : null;
+
+        if (nextItem) {
+            if (this.noSelectOnArrowKey) {
+                nextItem.hasPrimarySelectionBorderOnly = true;
+                this.selectListItem(nextItem.listItem as T);
+            } else {
+                nextItem.select();
+            }
+        }
+        this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(()=> this.loading = false);
+        this.list = this.list.filter(item => !idsOfItemsToDelete.includes(item.id));
+    }
+
+
+
+    protected sort(item?: T) {
+        this.list.sort((a, b) => a.text.localeCompare(b.text));
     }
 
 

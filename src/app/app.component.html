@@ -34,6 +34,7 @@
       <div style="height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
         
         <ns-editable-hierarchy-list #hierarchy
+                                    [noSelectOnArrowKey]="true"
                                     (selectedItemsEvent)="onSelectedHierarchyItems($event)"
                                     (hierarchyCollapseStateUpdatedEvent)="onHierarchyCollapseStateUpdated($event)">
         </ns-editable-hierarchy-list>

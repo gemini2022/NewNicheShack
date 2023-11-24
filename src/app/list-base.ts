@@ -27,21 +27,26 @@ export abstract class ListBase<T extends ListItem> {
   @ViewChildren('listItemComponent') protected listItemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
 
 
-
   private ngOnInit() {
     const loadListener = setInterval(() => {
       if (this.getItems != null) {
         clearInterval(loadListener);
         this.getItems()
           .pipe(take(1))
-          .subscribe(x => {
+          .subscribe((items: Array<T>) => {
             if (this.loading) {
               this.loading = false
-              this.list = x;
+              this.loadItems(items)
             }
           })
       }
     })
+  }
+
+
+
+  protected loadItems(items: Array<T>) {
+    this.list = items;
   }
 
 

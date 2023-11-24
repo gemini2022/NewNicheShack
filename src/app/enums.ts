@@ -6,7 +6,17 @@ export enum SecondarySelectionType {
 }
 
 
+
 export enum ExitEditType {
     Enter,
     Escape
+}
+
+
+
+export enum CaseType {
+    None,
+    TitleCase,
+    LowerCase,
+    CapitalizedCase
 }

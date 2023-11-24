@@ -1,12 +1,13 @@
 import { ListItem } from "./list-item";
 import { ListItemBase } from "./list-item-base";
-import { ExitEditType, SecondarySelectionType } from "./enums";
+import { CaseType, ExitEditType, SecondarySelectionType } from "./enums";
 import { Output, EventEmitter, ViewChild, ElementRef, Directive } from "@angular/core";
 import { EditableListItemComponent } from "./editable-list-item/editable-list-item.component";
 
 @Directive()
 export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
   // Private
+  private caseType!: CaseType;
   private itemAdded: boolean = false;
   private textCaretPosition!: Selection;
   protected listPasted: boolean = false;
@@ -37,15 +38,16 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  public identify() {
+  public identify(caseType: CaseType) {
     this.isNew = true;
-    this.enterEditMode();
+    this.enterEditMode(caseType);
   }
 
 
 
-  public enterEditMode() {
+  public enterEditMode(caseType: CaseType) {
     this.inEditMode = true;
+    this.caseType = caseType;
     this.getTextCaretPosition();
     this.hasPrimarySelection = false;
     if (!this.isNew) this.selectRange();
@@ -89,18 +91,19 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
       this.showSpinner.emit();
       if (!this.itemAdded) {
         this.itemAdded = true;
-        this.listPasted ? this.addedItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedItemEvent.emit(this.listItemTextElement.nativeElement.innerText);
+        this.listPasted ? this.addedItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedItemEvent.emit(this.setCase(this.listItemTextElement.nativeElement.innerText.trim()));
       }
 
     } else {
-      const text = this.listItemTextElement.nativeElement.innerText.trim();
+      const text = this.setCase(this.listItemTextElement.nativeElement.innerText.trim());
       this.listItemTextElement.nativeElement.innerText = '';
 
       setTimeout(() => {
         this.listItemTextElement.nativeElement.innerText = text;
         if (this.listItem.text != text) {
           this.showSpinner.emit();
-          this.editedItemEvent.emit(({ id: this.listItem.id, text: text } as T));
+          this.listItem.text = text;
+          this.editedItemEvent.emit(this.listItem);
         } else {
           this.select();
         }
@@ -295,5 +298,28 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
     this.isEnabled = true;
     this.inEditMode = false;
     this.hasUnselection = false;
+  }
+
+
+
+  private setCase(text: string): string {
+    switch (this.caseType) {
+
+      // Capitalized Case
+      case CaseType.CapitalizedCase:
+        text = text.toLowerCase().replace(/\b\w/g, x => x.toUpperCase());
+        break;
+
+      // Title Case
+      case CaseType.TitleCase:
+        text = text.toLowerCase().replace(/^\b\w|\n\w|\b(?!a\s|a\b|an\s|an\b|the\s|the\b|and\s|and\b|as\s|as\b|at\s|at\b|but\s|but\b|by\s|by\b|even\s|even\b|for\s|for\b|from\s|from\b|if\s|if\b|in\s|in\b|into\s|into\b|like\s|like\b|near\s|near\b|nor\s|nor\b|of\s|of\b|off\s|off\b|on\s|on\b|once\s|once\b|onto\s|onto\b|or\s|or\b|out\s|out\b|over\s|over\b|past\s|past\b|so\s|so\b|than\s|than\b|that\s|that\b|till\s|till\b|to\s|to\b|up\s|up\b|upon\s|upon\b|with\s|with\b|when\s|when\b|yet\s|yet\b)\w/g, x => x.toUpperCase());
+        break;
+
+      // Lower Case
+      case CaseType.LowerCase:
+        text = text.toLowerCase();
+        break;
+    }
+    return text;
   }
 }

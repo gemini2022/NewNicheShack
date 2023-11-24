@@ -1,6 +1,6 @@
 import { ListItem } from "./list-item";
 
-export class HierarchyListItem extends ListItem {
-    public tier!: number;
+export class HierarchyItem extends ListItem {
+    public tier: number = 0;
     public isParent!: boolean;
 }
