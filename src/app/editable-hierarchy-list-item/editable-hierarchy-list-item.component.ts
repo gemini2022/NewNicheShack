@@ -23,26 +23,26 @@ export class EditableHierarchyListItemComponent extends EditableListItemBase<Hie
   public isArrowFirstChange: boolean = true;
 
   // Outputs
-  @Output() public setHierarchyListItemsArrowEnableState: EventEmitter<boolean> = new EventEmitter();
+  @Output() public setHierarchyItemsArrowEnableState: EventEmitter<boolean> = new EventEmitter();
   @Output() public arrowChangedEvent: EventEmitter<EditableHierarchyListItemComponent> = new EventEmitter();
 
 
   public override enterEditMode(caseType: CaseType) {
     super.enterEditMode(caseType);
-    this.setHierarchyListItemsArrowEnableState.emit(false);
+    this.setHierarchyItemsArrowEnableState.emit(false);
   }
 
 
 
   public override exitEditMode(exitEditType?: ExitEditType) {
     super.exitEditMode(exitEditType);
-    this.setHierarchyListItemsArrowEnableState.emit(true);
+    this.setHierarchyItemsArrowEnableState.emit(true);
   }
 
 
 
-  public override initialize(primarySelectedListItemIsBorderOnly?: boolean): void {
-    super.initialize(primarySelectedListItemIsBorderOnly);
+  public override initialize(primarySelectedItemIsBorderOnly?: boolean): void {
+    super.initialize(primarySelectedItemIsBorderOnly);
     this.isArrowEnabled = true;
   }
 }

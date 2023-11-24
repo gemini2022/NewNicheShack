@@ -7,19 +7,19 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let editableListItem of list">
+    <div *ngFor="let editableListItem of items">
         <ns-editable-list-item #listItemComponent
                                (onDoubleClick)="edit()"
                                (onInput)="onInput($event)"
-                               [listItem]="editableListItem"
+                               [item]="editableListItem"
                                (showSpinner)="loading = true"
-                               (onMouseDown)="selectListItem($event)"
+                               (onMouseDown)="selectItem($event)"
                                (addedItemEvent)="onItemAdded($event)"
-                               (reinitializeList)="reinitializeList()"
+                               (reinitializeItems)="reinitializeItems()"
                                (addedItemsEvent)="onItemsAdded($event)"
                                (editedItemEvent)="onItemEdited($event)"
-                               (removeNewListItemFromList)="removeNewListItemFromList()"
-                               (setListItemsEnableState)="setListItemsEnableState($event)"
+                               (removeNewItem)="removeNewItem()"
+                               (setAllItemsEnableState)="setAllItemsEnableState($event)"
                                (stopMouseDownPropagation)="stopMouseDownPropagation = true">
         </ns-editable-list-item>
     </div>

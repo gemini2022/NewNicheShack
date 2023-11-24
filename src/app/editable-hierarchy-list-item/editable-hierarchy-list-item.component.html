@@ -1,8 +1,8 @@
-<div #listItemElement
+<div #itemElement
      class="list-item"
      *ngIf="!isHidden"
-     (dblclick)="onListItemDoubleClick()"
-     (mousedown)="onListItemDown($event)"
+     (dblclick)="onItemDoubleClick()"
+     (mousedown)="onItemDown($event)"
      [tabindex]="!inEditMode ? '-1' : null"
      (contextmenu)="$event.preventDefault()"
      [ngClass]="{'edited-list-item': inEditMode,
@@ -14,22 +14,22 @@
                  'list-secondary-selection-top': secondarySelectionType == SecondarySelectionType.Top,
                  'list-secondary-selection-middle': secondarySelectionType == SecondarySelectionType.Middle,
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
-     [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
+     [ngStyle]="{'display': multipleItemsPasted ? 'block' : 'flex', 'height': multipleItemsPasted ? 'fit-content' : null}">
 
-     <div [style.paddingLeft.px]="listItem.tier * 35"
+     <div [style.paddingLeft.px]="item.tier * 35"
           class="hierarchy-arrow-component-container"
-          (mousedown)="stopListItemSelectionPropagation = true"
-          (dblclick)="stopListItemDoubleClickPropagation = true">
+          (mousedown)="stopItemSelectionPropagation = true"
+          (dblclick)="stopItemDoubleClickPropagation = true">
           
           <ns-hierarchy-arrow [isEnabled]="isArrowEnabled"
                               [isArrowDown]="isArrowDown"
                               [disabledOpacity]="inEditMode ? 0.25 : 1"
-                              *ngIf="listItem.tier === 0 || listItem.isParent"
+                              *ngIf="item.tier === 0 || item.isParent"
                               (arrowChangedEvent)="isArrowDown = $event; arrowChangedEvent.emit(this)">
           </ns-hierarchy-arrow>
      </div>
      
-     <div #listItemTextElement
+     <div #itemTextElement
           (paste)="onPaste($event)"
           class="hierarchy-list-item-text"
           (keydown)="getTextCaretPosition()"
@@ -37,6 +37,6 @@
           (mousedown)="getTextCaretPosition()"
           [contentEditable]="inEditMode == true"
           [ngClass]="{'edited-list-item-text': inEditMode}"
-          (input)="onInput.emit(listItemTextElement.innerText)"
-          >{{listItem.text}}</div>
+          (input)="onInput.emit(itemTextElement.innerText)"
+          >{{item.text}}</div>
 </div>

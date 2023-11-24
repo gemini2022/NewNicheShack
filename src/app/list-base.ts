@@ -9,7 +9,7 @@ export abstract class ListBase<T extends ListItem> {
   // Private
   protected loading: boolean = true;
   protected renderer = inject(Renderer2);
-  protected list: Array<T> = new Array<T>();
+  protected items: Array<T> = new Array<T>();
   protected removeKeydownListener!: () => void;
   protected eventListenersAdded: boolean = false;
 
@@ -24,7 +24,7 @@ export abstract class ListBase<T extends ListItem> {
   @Output() public selectedItemsEvent: EventEmitter<Array<T>> = new EventEmitter();
 
   // View Children
-  @ViewChildren('listItemComponent') protected listItemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
+  @ViewChildren('listItemComponent') protected itemComponents: QueryList<ListItemComponent> = new QueryList<ListItemComponent>();
 
 
   private ngOnInit() {
@@ -46,7 +46,7 @@ export abstract class ListBase<T extends ListItem> {
 
 
   protected loadItems(items: Array<T>) {
-    this.list = items;
+    this.items = items;
   }
 
 
@@ -77,10 +77,10 @@ export abstract class ListBase<T extends ListItem> {
 
   protected onEnter(e: KeyboardEvent): void {
     e.preventDefault();
-    const listItemHasPrimarySelectionBorderOnly = this.listItemComponents.find(x => x.hasPrimarySelection && !x.hasSecondarySelection);
-    if (listItemHasPrimarySelectionBorderOnly) {
-      const index = this.list.indexOf(listItemHasPrimarySelectionBorderOnly.listItem as T);
-      if (index != -1) this.selectListItem(this.list[index]);
+    const itemHasPrimarySelectionBorderOnly = this.itemComponents.find(x => x.hasPrimarySelection && !x.hasSecondarySelection);
+    if (itemHasPrimarySelectionBorderOnly) {
+      const index = this.items.indexOf(itemHasPrimarySelectionBorderOnly.item as T);
+      if (index != -1) this.selectItem(this.items[index]);
     }
   }
 
@@ -88,65 +88,65 @@ export abstract class ListBase<T extends ListItem> {
 
   protected onArrowKey(e: KeyboardEvent, direction: number): void {
     e.preventDefault();
-    const currentListItem = this.listItemComponents.find(x => x.hasPrimarySelection);
-    if (currentListItem) this.selectItemOnArrowKey(currentListItem, direction);
+    const currentItem = this.itemComponents.find(x => x.hasPrimarySelection);
+    if (currentItem) this.selectItemOnArrowKey(currentItem, direction);
   }
 
 
 
-  protected selectItemOnArrowKey(currentListItemComponent: ListItemComponent, direction: number) {
-    const currentIndex = this.list.indexOf(currentListItemComponent.listItem as T);
-    const nextIndex = this.loopSelection ? (currentIndex + direction + this.list.length) % this.list.length : currentIndex + direction;
+  protected selectItemOnArrowKey(currentItemComponent: ListItemComponent, direction: number) {
+    const currentIndex = this.items.indexOf(currentItemComponent.item as T);
+    const nextIndex = this.loopSelection ? (currentIndex + direction + this.items.length) % this.items.length : currentIndex + direction;
 
     if (this.noSelectOnArrowKey) {
-      const listItemComponent = this.listItemComponents.get(nextIndex);
-      if (listItemComponent) listItemComponent.hasPrimarySelectionBorderOnly = true;
+      const itemComponent = this.itemComponents.get(nextIndex);
+      if (itemComponent) itemComponent.hasPrimarySelectionBorderOnly = true;
     }
-    if (nextIndex >= 0 && nextIndex < this.list.length) this.selectListItem(this.list[nextIndex]);
+    if (nextIndex >= 0 && nextIndex < this.items.length) this.selectItem(this.items[nextIndex]);
   }
 
 
 
-  protected onItemSelectionUsingNoModifierKey(listItemComponent: ListItemComponent): void {
-    this.initializeListItemsInList(listItemComponent.hasPrimarySelectionBorderOnly);
-    listItemComponent.hasPrimarySelection = true;
-    if (!listItemComponent.hasPrimarySelectionBorderOnly) {
-      listItemComponent.hasSecondarySelection = true;
-      this.selectedItemsEvent.emit([listItemComponent.listItem as T]);
+  protected onItemSelectionUsingNoModifierKey(itemComponent: ListItemComponent): void {
+    this.initializeItems(itemComponent.hasPrimarySelectionBorderOnly);
+    itemComponent.hasPrimarySelection = true;
+    if (!itemComponent.hasPrimarySelectionBorderOnly) {
+      itemComponent.hasSecondarySelection = true;
+      this.selectedItemsEvent.emit([itemComponent.item as T]);
     } else {
-      listItemComponent.hasPrimarySelectionBorderOnly = false;
+      itemComponent.hasPrimarySelectionBorderOnly = false;
     }
   }
 
 
 
-  protected initializeListItemsInList(primarySelectedListItemIsBorderOnly?: boolean): void {
-    this.listItemComponents.forEach(listItemComponent => {
-      listItemComponent.initialize(primarySelectedListItemIsBorderOnly);
+  protected initializeItems(primarySelectedItemIsBorderOnly?: boolean): void {
+    this.itemComponents.forEach(itemComponent => {
+      itemComponent.initialize(primarySelectedItemIsBorderOnly);
     });
   }
 
 
 
   protected setSecondarySelectionType(): void {
-    if (this.list.length !== 1) {
-      if (this.listItemComponents.first.hasSecondarySelection && !this.listItemComponents.first.hasPrimarySelection) this.listItemComponents.first.secondarySelectionType = SecondarySelectionType.All;
-      for (let i = 1; i < this.listItemComponents.length - 1; i++) {
-        const currentListItem = this.listItemComponents.get(i);
-        if (currentListItem && currentListItem.hasSecondarySelection && !currentListItem.hasPrimarySelection) currentListItem.secondarySelectionType = SecondarySelectionType.All;
+    if (this.items.length !== 1) {
+      if (this.itemComponents.first.hasSecondarySelection && !this.itemComponents.first.hasPrimarySelection) this.itemComponents.first.secondarySelectionType = SecondarySelectionType.All;
+      for (let i = 1; i < this.itemComponents.length - 1; i++) {
+        const currentItem = this.itemComponents.get(i);
+        if (currentItem && currentItem.hasSecondarySelection && !currentItem.hasPrimarySelection) currentItem.secondarySelectionType = SecondarySelectionType.All;
       }
-      if (this.listItemComponents.last.hasSecondarySelection && !this.listItemComponents.last.hasPrimarySelection) this.listItemComponents.last.secondarySelectionType = SecondarySelectionType.All;
+      if (this.itemComponents.last.hasSecondarySelection && !this.itemComponents.last.hasPrimarySelection) this.itemComponents.last.secondarySelectionType = SecondarySelectionType.All;
     }
   }
 
 
 
-  public selectListItem(listItem: T): void {
-    const listItemComponent = this.listItemComponents.find(x => x.listItem.id == listItem.id);
-    if (listItemComponent) {
+  public selectItem(item: T): void {
+    const itemComponent = this.itemComponents.find(x => x.item.id == item.id);
+    if (itemComponent) {
       this.addEventListeners();
-      listItemComponent.listItemElement.nativeElement.focus();
-      this.onItemSelectionUsingNoModifierKey(listItemComponent);
+      itemComponent.itemElement.nativeElement.focus();
+      this.onItemSelectionUsingNoModifierKey(itemComponent);
       this.setSecondarySelectionType();
     }
   }

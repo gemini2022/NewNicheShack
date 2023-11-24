@@ -1,7 +1,7 @@
-<div #listItemElement
+<div #itemElement
      class="list-item"
-     (dblclick)="onListItemDoubleClick()"
-     (mousedown)="onListItemDown($event)"
+     (dblclick)="onItemDoubleClick()"
+     (mousedown)="onItemDown($event)"
      [tabindex]="!inEditMode ? '-1' : null"
      (contextmenu)="$event.preventDefault()"
      [ngClass]="{'edited-list-item': inEditMode,
@@ -13,9 +13,9 @@
                  'list-secondary-selection-top': secondarySelectionType == SecondarySelectionType.Top,
                  'list-secondary-selection-middle': secondarySelectionType == SecondarySelectionType.Middle,
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
-     [ngStyle]="{'display': listPasted ? 'block' : 'flex', 'height': listPasted ? 'fit-content' : null}">
+     [ngStyle]="{'display': multipleItemsPasted ? 'block' : 'flex', 'height': multipleItemsPasted ? 'fit-content' : null}">
      
-     <div #listItemTextElement
+     <div #itemTextElement
           class="list-item-text"
           (paste)="onPaste($event)"
           (keydown)="getTextCaretPosition()"
@@ -23,6 +23,6 @@
           (mousedown)="getTextCaretPosition()"
           [contentEditable]="inEditMode == true"
           [ngClass]="{'edited-list-item-text': inEditMode}"
-          (input)="onInput.emit(listItemTextElement.innerText)"
-          >{{listItem.text}}</div>
+          (input)="onInput.emit(itemTextElement.innerText)"
+          >{{item.text}}</div>
 </div>

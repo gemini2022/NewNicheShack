@@ -31,13 +31,13 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
   protected override loadItems(items: Array<HierarchyItem>) {
     items.map(x => x.tier = 0)
-    this.list = items;
+    this.items = items;
   }
 
 
 
   protected onArrowChange(parentHierarchyItem: EditableHierarchyListItemComponent) {
-    this.parentIndex = this.list.indexOf(parentHierarchyItem.listItem);
+    this.parentIndex = this.items.indexOf(parentHierarchyItem.item);
     this.showHide(this.parentIndex);
     this.getHierarchyCollapseState();
     this.getChildren(parentHierarchyItem);
@@ -48,13 +48,13 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
   private showHide(parentIndex: number) {
     if (parentIndex === -1) return;
-    for (let i = parentIndex + 1; i < this.list.length; i++) {
-      if (this.list[i].tier === this.list[parentIndex].tier + 1) {
+    for (let i = parentIndex + 1; i < this.items.length; i++) {
+      if (this.items[i].tier === this.items[parentIndex].tier + 1) {
 
         this.editableHierarchyListItemComponents.get(i)!.isHidden = !(this.editableHierarchyListItemComponents.get(parentIndex)!.isArrowDown && !this.editableHierarchyListItemComponents.get(parentIndex)!.isHidden);
-        if (i + 1 < this.list.length && this.list[i + 1].tier > this.list[i].tier) this.showHide(i);
+        if (i + 1 < this.items.length && this.items[i + 1].tier > this.items[i].tier) this.showHide(i);
 
-      } else if (this.list[i].tier <= this.list[parentIndex].tier) {
+      } else if (this.items[i].tier <= this.items[parentIndex].tier) {
         break;
       }
     }
@@ -66,13 +66,13 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
     if (parentItem.isArrowDown && parentItem.isArrowFirstChange) {
       parentItem.isArrowFirstChange = false;
 
-      this.getChildItems(parentItem.listItem.id)
+      this.getChildItems(parentItem.item.id)
         .pipe(take(1))
         .subscribe((childItems: Array<HierarchyItem>) => {
           const startIndex = this.parentIndex + (this.newItemAdded ? 2 : 1);
 
-          childItems.map(x => x.tier = parentItem.listItem.tier + 1);
-          this.list.splice(startIndex, 0, ...childItems);
+          childItems.map(x => x.tier = parentItem.item.tier + 1);
+          this.items.splice(startIndex, 0, ...childItems);
 
           if (this.newItemAdded) {
             setTimeout(() => {
@@ -94,15 +94,15 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
     const currentSelectedItem = this.editableHierarchyListItemComponents.find(x => x.hasPrimarySelection);
     if (!currentSelectedItem || currentSelectedItem === parentHierarchyItem) return;
 
-    const indexOfParentHierarchyItem = this.list.indexOf(parentHierarchyItem.listItem);
+    const indexOfParentHierarchyItem = this.items.indexOf(parentHierarchyItem.item);
     if (indexOfParentHierarchyItem === -1) return;
 
-    for (let i = indexOfParentHierarchyItem + 1; i < this.list.length; i++) {
-      if (this.list[i].tier <= parentHierarchyItem.listItem.tier) break;
-      if (this.list[i].id == currentSelectedItem.listItem.id) {
+    for (let i = indexOfParentHierarchyItem + 1; i < this.items.length; i++) {
+      if (this.items[i].tier <= parentHierarchyItem.item.tier) break;
+      if (this.items[i].id == currentSelectedItem.item.id) {
         if (this.noSelectOnArrowKey) {
           parentHierarchyItem.hasPrimarySelectionBorderOnly = true;
-          super.selectListItem(parentHierarchyItem.listItem);
+          super.selectItem(parentHierarchyItem.item);
         } else {
           currentSelectedItem.initialize();
           parentHierarchyItem.select();
@@ -119,17 +119,17 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
 
 
-  protected setHierarchyListItemsArrowEnableState(isEnabled: boolean) {
+  protected setHierarchyItemsArrowEnableState(isEnabled: boolean) {
     this.editableHierarchyListItemComponents.forEach(x => x.isArrowEnabled = isEnabled);
   }
 
 
 
-  public override selectListItem(listItem: HierarchyItem): void {
-    const index = this.list.indexOf(listItem);
+  public override selectItem(item: HierarchyItem): void {
+    const index = this.items.indexOf(item);
 
     if (!this.editableHierarchyListItemComponents.get(index)!.isHidden) {
-      super.selectListItem(listItem);
+      super.selectItem(item);
       return;
     }
     this.selectNextVisibleItem(index);
@@ -142,10 +142,10 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
     if (indexOfCurrentSelectedItem === -1) return;
     const direction = indexOfNextSelectedItem - indexOfCurrentSelectedItem;
 
-    for (let i = indexOfNextSelectedItem + direction; i >= 0 && i < this.list.length; i += direction) {
+    for (let i = indexOfNextSelectedItem + direction; i >= 0 && i < this.items.length; i += direction) {
       const component = this.editableHierarchyListItemComponents.get(i);
       if (component && !component.isHidden) {
-        super.selectListItem(component.listItem);
+        super.selectItem(component.item);
         break;
       }
     }
@@ -165,15 +165,15 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
   public override add(tier: number = 0, isParent: boolean = false): void {
     const selectedItemIndex = this.editableHierarchyListItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
     this.addEventListeners();
-    this.initializeListItemsInList();
+    this.initializeItems();
     this.stopMouseDownPropagation = false;
 
     if (tier === 0) {
       this.insertItem(0, tier, isParent);
     } else {
       if (selectedItemIndex === -1) return;
-      const currentTier = this.list[selectedItemIndex].tier;
-      const insertIndex = tier > currentTier ? selectedItemIndex + 1 : this.getParentIndex(this.list[selectedItemIndex]) + 1;
+      const currentTier = this.items[selectedItemIndex].tier;
+      const insertIndex = tier > currentTier ? selectedItemIndex + 1 : this.getParentIndex(this.items[selectedItemIndex]) + 1;
       this.insertItem(insertIndex, tier, isParent);
 
       if (!this.editableHierarchyListItemComponents.get(selectedItemIndex)!.isArrowDown && tier > currentTier) {
@@ -187,7 +187,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
 
   private insertItem(index: number, tier: number, isParent: boolean): void {
-    this.list.splice(index, 0, { id: '', text: '', tier, isParent } as HierarchyItem);
+    this.items.splice(index, 0, { id: '', text: '', tier, isParent } as HierarchyItem);
     setTimeout(() => this.editableHierarchyListItemComponents.get(index)!.identify(this.caseType));
   }
 
@@ -196,19 +196,19 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
   protected override onItemAdded(text: string) {
     const newItemIndex = this.editableHierarchyListItemComponents.toArray().findIndex(itemComponent => itemComponent.isNew);
     if (newItemIndex === -1) return;
-    const parentIndex = this.getParentIndex(this.list[newItemIndex]);
-    const parentId = parentIndex ? this.list[parentIndex].id : null;
+    const parentIndex = this.getParentIndex(this.items[newItemIndex]);
+    const parentId = parentIndex ? this.items[parentIndex].id : null;
 
     this.postHierarchyItem(parentId, text)
       .pipe(take(1))
       .subscribe((id: any) => {
         this.loading = false;
-        const newItem = { id: id, text: text, tier: this.list[newItemIndex].tier, isParent: this.list[newItemIndex].isParent } as HierarchyItem;
-        this.list.splice(newItemIndex, 1, newItem);
+        const newItem = { id: id, text: text, tier: this.items[newItemIndex].tier, isParent: this.items[newItemIndex].isParent } as HierarchyItem;
+        this.items.splice(newItemIndex, 1, newItem);
         this.sort(newItem);
 
         setTimeout(() => {
-          const newItemComponent = this.editableHierarchyListItemComponents.find(itemComponent => itemComponent.listItem === newItem);
+          const newItemComponent = this.editableHierarchyListItemComponents.find(itemComponent => itemComponent.item === newItem);
           if (newItemComponent) newItemComponent.select();
         });
       })
@@ -221,13 +221,13 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
     let tempArray: Array<HierarchyItem> = [];
 
     if (hierarchyItem.tier === 0) {
-      tempArray = this.list.filter(item => item.tier === 0);
+      tempArray = this.items.filter(item => item.tier === 0);
     } else {
       parentHierarchyIndex = this.getParentIndex(hierarchyItem);
-      for (let i = parentHierarchyIndex + 1; i < this.list.length; i++) {
-        if (this.list[i].tier == this.list[parentHierarchyIndex].tier) break;
-        if (this.list[i].tier == this.list[parentHierarchyIndex].tier + 1) {
-          tempArray.push(this.list[i] as HierarchyItem)
+      for (let i = parentHierarchyIndex + 1; i < this.items.length; i++) {
+        if (this.items[i].tier == this.items[parentHierarchyIndex].tier) break;
+        if (this.items[i].tier == this.items[parentHierarchyIndex].tier + 1) {
+          tempArray.push(this.items[i] as HierarchyItem)
         }
       }
     }
@@ -235,24 +235,24 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
     let newHierarchyGroup: Array<HierarchyItem> = [];
     tempArray.forEach(x => {
-      let index = this.list.findIndex(y => y.id === x.id);
+      let index = this.items.findIndex(y => y.id === x.id);
 
-      for (let i = index; i < this.list.length; i++) {
-        if (i != index && this.list[i].tier <= this.list[index].tier) break;
-        newHierarchyGroup.push(this.list[i] as HierarchyItem);
+      for (let i = index; i < this.items.length; i++) {
+        if (i != index && this.items[i].tier <= this.items[index].tier) break;
+        newHierarchyGroup.push(this.items[i] as HierarchyItem);
       }
     })
-    this.list.splice(parentHierarchyIndex + 1, newHierarchyGroup.length, ...newHierarchyGroup);
+    this.items.splice(parentHierarchyIndex + 1, newHierarchyGroup.length, ...newHierarchyGroup);
   }
 
 
 
   getParentIndex(item: HierarchyItem): number {
     let parentIndex!: number;
-    const itemIndex = this.list.indexOf(item);
+    const itemIndex = this.items.indexOf(item);
 
     for (let i = itemIndex; i >= 0; i--) {
-      if (this.list[i].tier < this.list[itemIndex].tier) {
+      if (this.items[i].tier < this.items[itemIndex].tier) {
         parentIndex = i;
         break;
       }

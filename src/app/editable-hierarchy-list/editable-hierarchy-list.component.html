@@ -7,22 +7,22 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let editableHierarchyListItem of list">
+    <div *ngFor="let editableHierarchyListItem of items">
         <ns-editable-hierarchy-list-item #listItemComponent
                                          (onDoubleClick)="edit()"
                                          (onInput)="onInput($event)"
                                          (showSpinner)="loading = true"
                                          (addedItemEvent)="onItemAdded($event)"
-                                         [listItem]="editableHierarchyListItem"
-                                         (onMouseDown)="selectListItem($event)"
-                                         (reinitializeList)="reinitializeList()"
+                                         [item]="editableHierarchyListItem"
+                                         (onMouseDown)="selectItem($event)"
+                                         (reinitializeItems)="reinitializeItems()"
                                          (addedItemsEvent)="onItemsAdded($event)"
                                          (editedItemEvent)="onItemEdited($event)"
                                          (arrowChangedEvent)="onArrowChange($event)"
-                                         (removeNewListItemFromList)="removeNewListItemFromList()"
-                                         (setListItemsEnableState)="setListItemsEnableState($event)"
+                                         (removeNewItem)="removeNewItem()"
+                                         (setAllItemsEnableState)="setAllItemsEnableState($event)"
                                          (stopMouseDownPropagation)="stopMouseDownPropagation = true"
-                                         (setHierarchyListItemsArrowEnableState)="setHierarchyListItemsArrowEnableState($event)">
+                                         (setHierarchyItemsArrowEnableState)="setHierarchyItemsArrowEnableState($event)">
         </ns-editable-hierarchy-list-item>
     </div>
 </div>

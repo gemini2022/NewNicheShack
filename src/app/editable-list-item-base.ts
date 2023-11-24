@@ -10,9 +10,9 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
   private caseType!: CaseType;
   private itemAdded: boolean = false;
   private textCaretPosition!: Selection;
-  protected listPasted: boolean = false;
-  protected stopListItemSelectionPropagation: boolean = false;
-  protected stopListItemDoubleClickPropagation: boolean = false;
+  protected multipleItemsPasted: boolean = false;
+  protected stopItemSelectionPropagation: boolean = false;
+  protected stopItemDoubleClickPropagation: boolean = false;
 
   // Public
   public isNew: boolean = false;
@@ -25,16 +25,16 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
   @Output() public onInput: EventEmitter<string> = new EventEmitter();
   @Output() public showSpinner: EventEmitter<void> = new EventEmitter();
   @Output() public onDoubleClick: EventEmitter<void> = new EventEmitter();
-  @Output() public reinitializeList: EventEmitter<void> = new EventEmitter();
+  @Output() public reinitializeItems: EventEmitter<void> = new EventEmitter();
   @Output() public editedItemEvent: EventEmitter<T> = new EventEmitter();
   @Output() public addedItemEvent: EventEmitter<string> = new EventEmitter();
   @Output() public stopMouseDownPropagation: EventEmitter<void> = new EventEmitter();
-  @Output() public removeNewListItemFromList: EventEmitter<void> = new EventEmitter();
-  @Output() public setListItemsEnableState: EventEmitter<boolean> = new EventEmitter();
+  @Output() public removeNewItem: EventEmitter<void> = new EventEmitter();
+  @Output() public setAllItemsEnableState: EventEmitter<boolean> = new EventEmitter();
   @Output() public addedItemsEvent: EventEmitter<Array<string>> = new EventEmitter();
 
   // View Child
-  @ViewChild('listItemTextElement') protected listItemTextElement!: ElementRef<HTMLElement>;
+  @ViewChild('itemTextElement') protected itemTextElement!: ElementRef<HTMLElement>;
 
 
 
@@ -51,33 +51,33 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
     this.getTextCaretPosition();
     this.hasPrimarySelection = false;
     if (!this.isNew) this.selectRange();
-    this.setListItemsEnableState.emit(false);
-    setTimeout(() => this.listItemTextElement.nativeElement.focus());
+    this.setAllItemsEnableState.emit(false);
+    setTimeout(() => this.itemTextElement.nativeElement.focus());
   }
 
 
 
   public exitEditMode(exitEditType?: ExitEditType) {
-    if (this.listItemTextElement.nativeElement.innerText.trim().length > 0) {
-      exitEditType === ExitEditType.Escape ? this.cancelListItemEdit() : this.completeListItemEdit();
-    } else if (exitEditType !== ExitEditType.Enter) this.cancelListItemEdit();
-    this.setListItemsEnableState.emit(true);
+    if (this.itemTextElement.nativeElement.innerText.trim().length > 0) {
+      exitEditType === ExitEditType.Escape ? this.cancelItemEdit() : this.completeItemEdit();
+    } else if (exitEditType !== ExitEditType.Enter) this.cancelItemEdit();
+    this.setAllItemsEnableState.emit(true);
   }
 
 
 
-  private cancelListItemEdit(): void {
+  private cancelItemEdit(): void {
     if (this.isNew) {
-      this.removeNewListItemFromList.emit();
-      this.reinitializeList.emit();
+      this.removeNewItem.emit();
+      this.reinitializeItems.emit();
     } else {
-      const listItemTextElement = this.listItemTextElement;
+      const itemTextElement = this.itemTextElement;
 
-      if (listItemTextElement && listItemTextElement.nativeElement) {
-        listItemTextElement.nativeElement.innerText = '';
+      if (itemTextElement && itemTextElement.nativeElement) {
+        itemTextElement.nativeElement.innerText = '';
 
         setTimeout(() => {
-          listItemTextElement.nativeElement.innerText = this.listItem.text;
+          itemTextElement.nativeElement.innerText = this.item.text;
           this.select();
         });
       }
@@ -86,24 +86,24 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  private completeListItemEdit(): void {
+  private completeItemEdit(): void {
     if (this.isNew) {
       this.showSpinner.emit();
       if (!this.itemAdded) {
         this.itemAdded = true;
-        this.listPasted ? this.addedItemsEvent.emit(this.listItemTextElement.nativeElement.innerText.split('\n')) : this.addedItemEvent.emit(this.setCase(this.listItemTextElement.nativeElement.innerText.trim()));
+        this.multipleItemsPasted ? this.addedItemsEvent.emit(this.itemTextElement.nativeElement.innerText.split('\n')) : this.addedItemEvent.emit(this.setCase(this.itemTextElement.nativeElement.innerText.trim()));
       }
 
     } else {
-      const text = this.setCase(this.listItemTextElement.nativeElement.innerText.trim());
-      this.listItemTextElement.nativeElement.innerText = '';
+      const text = this.setCase(this.itemTextElement.nativeElement.innerText.trim());
+      this.itemTextElement.nativeElement.innerText = '';
 
       setTimeout(() => {
-        this.listItemTextElement.nativeElement.innerText = text;
-        if (this.listItem.text != text) {
+        this.itemTextElement.nativeElement.innerText = text;
+        if (this.item.text != text) {
           this.showSpinner.emit();
-          this.listItem.text = text;
-          this.editedItemEvent.emit(this.listItem);
+          this.item.text = text;
+          this.editedItemEvent.emit(this.item);
         } else {
           this.select();
         }
@@ -114,10 +114,10 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
   private selectRange() {
-    const listItemTextElement = this.listItemTextElement;
+    const itemTextElement = this.itemTextElement;
 
-    if (listItemTextElement && listItemTextElement.nativeElement) {
-      const firstChild = listItemTextElement.nativeElement.firstChild;
+    if (itemTextElement && itemTextElement.nativeElement) {
+      const firstChild = itemTextElement.nativeElement.firstChild;
 
       if (firstChild) {
         const range = document.createRange();
@@ -139,28 +139,28 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
     this.inEditMode = false;
     this.hasPrimarySelection = true;
     this.hasSecondarySelection = true;
-    this.listItemElement.nativeElement.focus();
+    this.itemElement.nativeElement.focus();
   }
 
 
 
-  public setFirstListItemSecondarySelectionType(secondListItem: EditableListItemComponent) {
+  public setFirstItemSecondarySelectionType(secondItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
-      this.secondarySelectionType = secondListItem.hasSecondarySelection || secondListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
+      this.secondarySelectionType = secondItem.hasSecondarySelection || secondItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
     }
   }
 
 
 
-  public setMiddleListItemSecondarySelectionType(prevListItem: EditableListItemComponent, nextListItem: EditableListItemComponent) {
+  public setMiddleItemSecondarySelectionType(prevItem: EditableListItemComponent, nextItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
-      if (!prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Top;
-      } else if (prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = nextListItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Bottom;
-      } else if (!prevListItem.hasSecondarySelection && !nextListItem.hasSecondarySelection) {
-        this.secondarySelectionType = prevListItem.hasUnselection ? SecondarySelectionType.Bottom : nextListItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
-      } else if (prevListItem.hasSecondarySelection && nextListItem.hasSecondarySelection) {
+      if (!prevItem.hasSecondarySelection && nextItem.hasSecondarySelection) {
+        this.secondarySelectionType = prevItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Top;
+      } else if (prevItem.hasSecondarySelection && !nextItem.hasSecondarySelection) {
+        this.secondarySelectionType = nextItem.hasUnselection ? SecondarySelectionType.Middle : SecondarySelectionType.Bottom;
+      } else if (!prevItem.hasSecondarySelection && !nextItem.hasSecondarySelection) {
+        this.secondarySelectionType = prevItem.hasUnselection ? SecondarySelectionType.Bottom : nextItem.hasUnselection ? SecondarySelectionType.Top : SecondarySelectionType.All;
+      } else if (prevItem.hasSecondarySelection && nextItem.hasSecondarySelection) {
         this.secondarySelectionType = SecondarySelectionType.Middle;
       }
     }
@@ -168,9 +168,9 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  public setLastListItemSecondarySelectionType(secondToLastListItem: EditableListItemComponent) {
+  public setLastItemSecondarySelectionType(secondToLastItem: EditableListItemComponent) {
     if (this.hasSecondarySelection && !this.hasPrimarySelection) {
-      this.secondarySelectionType = secondToLastListItem.hasSecondarySelection || secondToLastListItem.hasUnselection ? SecondarySelectionType.Bottom : SecondarySelectionType.All;
+      this.secondarySelectionType = secondToLastItem.hasSecondarySelection || secondToLastItem.hasUnselection ? SecondarySelectionType.Bottom : SecondarySelectionType.All;
     }
   }
 
@@ -204,10 +204,10 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
   private pasteClipboardData(clipboardData: string): void {
-    const listItemTextElement = this.listItemTextElement;
+    const itemTextElement = this.itemTextElement;
 
-    if (listItemTextElement && listItemTextElement.nativeElement) {
-      const firstChild = listItemTextElement.nativeElement.firstChild;
+    if (itemTextElement && itemTextElement.nativeElement) {
+      const firstChild = itemTextElement.nativeElement.firstChild;
 
       if (firstChild) {
         const textContent = firstChild.textContent;
@@ -234,17 +234,17 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
   private pasteClipboardListData(clipboardListData: Array<string>): void {
-    this.listPasted = true;
-    const divElements: string[] = clipboardListData.map(pastedListItem => "<div class=pasted-list-item>" + pastedListItem + "</div>");
+    this.multipleItemsPasted = true;
+    const divElements: string[] = clipboardListData.map(pastedItem => "<div class=pasted-item>" + pastedItem + "</div>");
     const singleString = divElements.join("");
-    const listItemTextElement = this.listItemTextElement;
+    const itemTextElement = this.itemTextElement;
 
-    if (listItemTextElement && listItemTextElement.nativeElement) {
-      listItemTextElement.nativeElement.innerHTML = singleString;
+    if (itemTextElement && itemTextElement.nativeElement) {
+      itemTextElement.nativeElement.innerHTML = singleString;
 
       // Set cursor at the end of the pasted text
       const range = document.createRange();
-      range.selectNodeContents(listItemTextElement.nativeElement);
+      range.selectNodeContents(itemTextElement.nativeElement);
       range.collapse(false);
       const selection = window.getSelection();
 
@@ -257,7 +257,7 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  protected override onListItemDown(e: MouseEvent) {
+  protected override onItemDown(e: MouseEvent) {
     const rightMouseButton = 2;
     this.stopMouseDownPropagation.emit();
 
@@ -265,20 +265,20 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
       if (e.button == rightMouseButton) console.log('right click')
 
       if (!(e.button === rightMouseButton && this.hasSecondarySelection)) {
-        if (this.stopListItemSelectionPropagation) {
-          this.stopListItemSelectionPropagation = false;
+        if (this.stopItemSelectionPropagation) {
+          this.stopItemSelectionPropagation = false;
           return
         }
-        super.onListItemDown(e);
+        super.onItemDown(e);
       }
     }
   }
 
 
 
-  protected onListItemDoubleClick() {
-    if (this.stopListItemDoubleClickPropagation) {
-      this.stopListItemDoubleClickPropagation = false;
+  protected onItemDoubleClick() {
+    if (this.stopItemDoubleClickPropagation) {
+      this.stopItemDoubleClickPropagation = false;
       return
     }
     this.onDoubleClick.emit();
@@ -292,8 +292,8 @@ export class EditableListItemBase<T extends ListItem> extends ListItemBase<T> {
 
 
 
-  public override initialize(primarySelectedListItemIsBorderOnly?: boolean): void {
-    super.initialize(primarySelectedListItemIsBorderOnly);
+  public override initialize(primarySelectedItemIsBorderOnly?: boolean): void {
+    super.initialize(primarySelectedItemIsBorderOnly);
     this.isPivot = false;
     this.isEnabled = true;
     this.inEditMode = false;

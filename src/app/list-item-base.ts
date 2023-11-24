@@ -11,25 +11,25 @@ export class ListItemBase<T> {
   public secondarySelectionType: SecondarySelectionType | undefined | null;
 
   // Input
-  @Input() public listItem!: T;
+  @Input() public item!: T;
 
   // Output
   @Output() public onMouseDown: EventEmitter<T> = new EventEmitter();
 
   // View Child
-  @ViewChild('listItemElement') public listItemElement!: ElementRef<HTMLElement>;
+  @ViewChild('itemElement') public itemElement!: ElementRef<HTMLElement>;
 
 
 
-  protected onListItemDown(e: MouseEvent) {
-    this.onMouseDown.emit(this.listItem);
+  protected onItemDown(e: MouseEvent) {
+    this.onMouseDown.emit(this.item);
   }
 
 
 
-  public initialize(primarySelectedListItemIsBorderOnly?: boolean) {
+  public initialize(primarySelectedItemIsBorderOnly?: boolean) {
     this.hasPrimarySelection = false;
     this.secondarySelectionType = null;
-    if (!primarySelectedListItemIsBorderOnly) this.hasSecondarySelection = false;
+    if (!primarySelectedItemIsBorderOnly) this.hasSecondarySelection = false;
   }
 }

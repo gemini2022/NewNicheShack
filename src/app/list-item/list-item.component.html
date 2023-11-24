@@ -1,13 +1,13 @@
-<div #listItemElement
+<div #itemElement
      tabindex="-1"
      class="list-item"
-     (mousedown)="onListItemDown($event)"
+     (mousedown)="onItemDown($event)"
      (contextmenu)="$event.preventDefault()"
      [ngClass]="{'list-primary-selection': hasPrimarySelection && hasSecondarySelection,
                  'list-secondary-selection-all': secondarySelectionType == SecondarySelectionType.All,
                  'list-primary-selection-border-only': hasPrimarySelection && !hasSecondarySelection}">
      
-     <div #listItemTextElement
+     <div #itemTextElement
           class="list-item-text"
-          >{{listItem.text}}</div>
+          >{{item.text}}</div>
 </div>
