@@ -12,7 +12,7 @@ import { ImageListItem } from './image-list-item';
 import { ImageListComponent } from './image-list/image-list.component';
 import { EditableHierarchyListComponent } from './editable-hierarchy-list/editable-hierarchy-list.component';
 import { HierarchyItem } from './hierarchy-list-item';
-import { CaseType } from './enums';
+import { KeywordsHierarchyComponent } from './keywords-hierarchy/keywords-hierarchy.component';
 
 @Component({
   selector: 'ns-root',
@@ -24,6 +24,7 @@ import { CaseType } from './enums';
     IconFontListComponent,
     ImageListComponent,
     EditableHierarchyListComponent,
+    KeywordsHierarchyComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

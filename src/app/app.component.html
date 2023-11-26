@@ -19,7 +19,7 @@
   </div>
 
   <!-- Hierarchy -->
-  <div style="width: 320px;">
+  <div style="width: 320px; margin-right: 50px;">
     <div style="display: flex; margin-bottom: 10px; justify-content: space-around; padding: 0 12px 0 12px;">
       <button (click)="hierarchy.add()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Niche</button>
       <button (click)="hierarchy.add(1, true)" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Subniche</button>
@@ -38,6 +38,25 @@
                                     (selectedItemsEvent)="onSelectedHierarchyItems($event)"
                                     (hierarchyCollapseStateUpdatedEvent)="onHierarchyCollapseStateUpdated($event)">
         </ns-editable-hierarchy-list>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keywords -->
+  <div style="width: 320px; margin-right: 50px;">
+    <div style="display: flex; margin-bottom: 10px; justify-content: space-around; padding: 0 12px 0 12px;">
+      <button (click)="hierarchy.add()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Keyword Group</button>
+      <button (click)="hierarchy.add(1)" (mousedown)="hierarchy.stopMouseDownPropagation = true">Add Keyword</button>
+    </div>
+    <div style="display: flex; margin-bottom: 10px; justify-content: space-around; padding: 0 74px 0 74px;">
+      <button (click)="hierarchy.edit()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Edit Item</button>
+      <button (click)="deleteHierarchyItems()" (mousedown)="hierarchy.stopMouseDownPropagation = true">Delete Item</button>
+    </div>
+
+    <div style="background: #282828; padding: 10px; border: 1px solid #414141; border-radius: 4px;">
+      <div style="height: 262px; background: #1e1e1e; border-radius: 3px; border: 1px solid black; border-right-color: #3c3c3c; border-bottom-color: #3c3c3c;">
+
+        <ns-keywords-hierarchy #keywords></ns-keywords-hierarchy>
       </div>
     </div>
   </div>

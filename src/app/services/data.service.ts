@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { KeyValue } from '@angular/common';
 
 @Injectable({

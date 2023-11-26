@@ -18,7 +18,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     public putItem!: (item: T) => Observable<void>;
     public stopMouseDownPropagation: boolean = false;
     public postItem!: (text: string) => Observable<any>;
-    public deleteItems!: (items: Array<T>) => Observable<void>;
+    public deleteItems!: (ids: Array<any>) => Observable<void>;
     public postItems!: (texts: Array<string>) => Observable<Array<T>>;
 
     // Inputs
@@ -296,9 +296,9 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
         if (this.editableItemComponents.find(x => x.inEditMode)) return;
         const idsOfItemsToDelete = this.getIdsOfItemsToDelete();
         if (idsOfItemsToDelete.length == 0) return;
-        // this.loading = true;
+        this.loading = true;
         this.selectNextItemAfterDelete();
-        // this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(()=> this.loading = false);
+        this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(()=> this.loading = false);
         this.items = this.items.filter(item => !idsOfItemsToDelete.includes(item.id));
     }
 
