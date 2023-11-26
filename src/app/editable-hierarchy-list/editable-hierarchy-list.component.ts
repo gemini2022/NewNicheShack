@@ -25,7 +25,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
   @Output() public hierarchyCollapseStateUpdatedEvent: EventEmitter<boolean> = new EventEmitter();
 
   // View Children
-  @ViewChildren('listItemComponent') protected editableHierarchyListItemComponents: QueryList<EditableHierarchyListItemComponent> = new QueryList<EditableHierarchyListItemComponent>();
+  @ViewChildren('listItemComponent') protected editableHierarchyItemComponents: QueryList<EditableHierarchyListItemComponent> = new QueryList<EditableHierarchyListItemComponent>();
 
 
 
@@ -51,7 +51,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
     for (let i = parentIndex + 1; i < this.items.length; i++) {
       if (this.items[i].tier === this.items[parentIndex].tier + 1) {
 
-        this.editableHierarchyListItemComponents.get(i)!.isHidden = !(this.editableHierarchyListItemComponents.get(parentIndex)!.isArrowDown && !this.editableHierarchyListItemComponents.get(parentIndex)!.isHidden);
+        this.editableHierarchyItemComponents.get(i)!.isHidden = !(this.editableHierarchyItemComponents.get(parentIndex)!.isArrowDown && !this.editableHierarchyItemComponents.get(parentIndex)!.isHidden);
         if (i + 1 < this.items.length && this.items[i + 1].tier > this.items[i].tier) this.showHide(i);
 
       } else if (this.items[i].tier <= this.items[parentIndex].tier) {
@@ -77,7 +77,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
           if (this.newItemAdded) {
             setTimeout(() => {
               for (let i = startIndex; i < startIndex + childItems.length; i++) {
-                this.editableHierarchyListItemComponents.get(i)!.isEnabled = false;
+                this.editableHierarchyItemComponents.get(i)!.isEnabled = false;
               }
             });
           }
@@ -91,7 +91,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
   private selectParentOnCollapse(parentHierarchyItem: EditableHierarchyListItemComponent) {
     if (parentHierarchyItem.isArrowDown) return;
 
-    const currentSelectedItem = this.editableHierarchyListItemComponents.find(x => x.hasPrimarySelection);
+    const currentSelectedItem = this.editableHierarchyItemComponents.find(x => x.hasPrimarySelection);
     if (!currentSelectedItem || currentSelectedItem === parentHierarchyItem) return;
 
     const indexOfParentHierarchyItem = this.items.indexOf(parentHierarchyItem.item);
@@ -114,13 +114,13 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
 
   private getHierarchyCollapseState() {
-    this.hierarchyCollapseStateUpdatedEvent.emit(!this.editableHierarchyListItemComponents.some(x => x.isArrowDown));
+    this.hierarchyCollapseStateUpdatedEvent.emit(!this.editableHierarchyItemComponents.some(x => x.isArrowDown));
   }
 
 
 
   protected setHierarchyItemsArrowEnableState(isEnabled: boolean) {
-    this.editableHierarchyListItemComponents.forEach(x => x.isArrowEnabled = isEnabled);
+    this.editableHierarchyItemComponents.forEach(x => x.isArrowEnabled = isEnabled);
   }
 
 
@@ -128,7 +128,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
   public override selectItem(item: HierarchyItem): void {
     const index = this.items.indexOf(item);
 
-    if (!this.editableHierarchyListItemComponents.get(index)!.isHidden) {
+    if (!this.editableHierarchyItemComponents.get(index)!.isHidden) {
       super.selectItem(item);
       return;
     }
@@ -138,12 +138,12 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
 
   private selectNextVisibleItem(indexOfNextSelectedItem: number) {
-    const indexOfCurrentSelectedItem = this.editableHierarchyListItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
+    const indexOfCurrentSelectedItem = this.editableHierarchyItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
     if (indexOfCurrentSelectedItem === -1) return;
     const direction = indexOfNextSelectedItem - indexOfCurrentSelectedItem;
 
     for (let i = indexOfNextSelectedItem + direction; i >= 0 && i < this.items.length; i += direction) {
-      const component = this.editableHierarchyListItemComponents.get(i);
+      const component = this.editableHierarchyItemComponents.get(i);
       if (component && !component.isHidden) {
         super.selectItem(component.item);
         break;
@@ -154,7 +154,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
 
   public collapseHierarchy() {
-    this.editableHierarchyListItemComponents.forEach(x => {
+    this.editableHierarchyItemComponents.forEach(x => {
       x.isArrowDown = false;
       x.arrowChangedEvent.emit(x);
     })
@@ -163,7 +163,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
 
   public override add(tier: number = 0, isParent: boolean = false): void {
-    const selectedItemIndex = this.editableHierarchyListItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
+    const selectedItemIndex = this.editableHierarchyItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
     this.addEventListeners();
     this.initializeItems();
     this.stopMouseDownPropagation = false;
@@ -176,10 +176,10 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
       const insertIndex = tier > currentTier ? selectedItemIndex + 1 : this.getParentIndex(this.items[selectedItemIndex]) + 1;
       this.insertItem(insertIndex, tier, isParent);
 
-      if (!this.editableHierarchyListItemComponents.get(selectedItemIndex)!.isArrowDown && tier > currentTier) {
+      if (!this.editableHierarchyItemComponents.get(selectedItemIndex)!.isArrowDown && tier > currentTier) {
         this.newItemAdded = true;
-        this.editableHierarchyListItemComponents.get(selectedItemIndex)!.isArrowDown = true;
-        this.onArrowChange(this.editableHierarchyListItemComponents.get(selectedItemIndex)!);
+        this.editableHierarchyItemComponents.get(selectedItemIndex)!.isArrowDown = true;
+        this.onArrowChange(this.editableHierarchyItemComponents.get(selectedItemIndex)!);
       }
     }
   }
@@ -188,13 +188,13 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
 
   private insertItem(index: number, tier: number, isParent: boolean): void {
     this.items.splice(index, 0, { id: '', text: '', tier, isParent } as HierarchyItem);
-    setTimeout(() => this.editableHierarchyListItemComponents.get(index)!.identify(this.caseType));
+    setTimeout(() => this.editableHierarchyItemComponents.get(index)!.identify(this.caseType));
   }
 
 
 
   protected override onItemAdded(text: string) {
-    const newItemIndex = this.editableHierarchyListItemComponents.toArray().findIndex(itemComponent => itemComponent.isNew);
+    const newItemIndex = this.editableHierarchyItemComponents.toArray().findIndex(itemComponent => itemComponent.isNew);
     if (newItemIndex === -1) return;
     const parentIndex = this.getParentIndex(this.items[newItemIndex]);
     const parentId = parentIndex ? this.items[parentIndex].id : null;
@@ -208,7 +208,7 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
         this.sort(newItem);
 
         setTimeout(() => {
-          const newItemComponent = this.editableHierarchyListItemComponents.find(itemComponent => itemComponent.item === newItem);
+          const newItemComponent = this.editableHierarchyItemComponents.find(itemComponent => itemComponent.item === newItem);
           if (newItemComponent) newItemComponent.select();
         });
       })
@@ -258,5 +258,53 @@ export class EditableHierarchyListComponent extends EditableListBase<HierarchyIt
       }
     }
     return parentIndex;
+  }
+
+
+
+  protected override getIdsOfItemsToDelete(): Array<any> {
+    let ids: Array<any> = new Array<any>();
+
+    this.editableHierarchyItemComponents.filter(x => x.hasSecondarySelection).forEach(x => {
+      const startingIndex = this.items.indexOf(x.item);
+
+      for (let i = startingIndex; i < this.items.length; i++) {
+        if (i != startingIndex && this.items[i].tier <= x.item.tier) break;
+
+        if (ids.indexOf(this.items[i].id) == -1) {
+          ids.push(this.items[i].id);
+        }
+      }
+    });
+    return ids;
+  }
+
+
+
+  protected override selectNextItemAfterDelete(): void {
+    const indexOfFirstSelectedItem = this.editableHierarchyItemComponents.toArray().findIndex(x => x.hasSecondarySelection);
+    const firstSelectedItem = this.editableHierarchyItemComponents.get(indexOfFirstSelectedItem);
+    if(!firstSelectedItem) return;
+  
+    const findNextItem = (direction: number): EditableHierarchyListItemComponent | undefined => {
+      for (let i = indexOfFirstSelectedItem + direction; i >= 0 && i < this.items.length; i += direction) {
+        if (this.items[i].tier < firstSelectedItem.item.tier) break;
+        const itemcomponent = this.editableHierarchyItemComponents.get(i);
+        if (itemcomponent && this.items[i].tier === firstSelectedItem.item.tier && !itemcomponent.hasSecondarySelection) {
+          return itemcomponent;
+        }
+      }
+      return undefined;
+    };
+  
+    let nextItem = findNextItem(1) || findNextItem(-1) || this.editableHierarchyItemComponents.get(this.getParentIndex(firstSelectedItem.item));
+    if (!nextItem) return;
+  
+    if (this.noSelectOnArrowKey) {
+      nextItem.hasPrimarySelectionBorderOnly = true;
+      this.selectItem(nextItem.item as HierarchyItem);
+    } else {
+      nextItem.select();
+    }
   }
 }

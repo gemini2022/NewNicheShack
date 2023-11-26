@@ -30,7 +30,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     @Output() public deleteKeyPressedEvent: EventEmitter<Array<T>> = new EventEmitter();
 
 
-    private ngAfterViewInit() {
+    private ngAfterViewInit(): void {
         this.editableItemComponents = this.itemComponents as QueryList<EditableListItemComponent>;
     }
 
@@ -132,7 +132,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    private onItemSelectionUsingShiftKey(itemComponent: EditableListItemComponent) {
+    private onItemSelectionUsingShiftKey(itemComponent: EditableListItemComponent): void {
         let selectedItems: Array<T> = new Array<T>();
 
         this.editableItemComponents.forEach(x => {
@@ -158,7 +158,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    private onItemSelectionUsingCtrlKey(itemComponent: EditableListItemComponent) {
+    private onItemSelectionUsingCtrlKey(itemComponent: EditableListItemComponent): void {
         this.editableItemComponents.forEach(x => {
             x.isPivot = false;
             x.hasUnselection = false;
@@ -220,7 +220,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    protected onItemAdded(text: string) {
+    protected onItemAdded(text: string): void {
         this.postItem(text)
             .pipe(take(1))
             .subscribe((id: any) => {
@@ -238,7 +238,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    protected onItemsAdded(texts: Array<string>) {
+    protected onItemsAdded(texts: Array<string>): void {
         this.postItems(texts)
             .pipe(take(1))
             .subscribe((newItems: Array<T>) => {
@@ -276,7 +276,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    protected onItemEdited(editedItem: T) {
+    protected onItemEdited(editedItem: T): void {
         this.putItem(editedItem)
             .pipe(take(1))
             .subscribe(() => {
@@ -294,29 +294,38 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
     public delete(): void {
         if (this.editableItemComponents.find(x => x.inEditMode)) return;
-
-        const idsOfItemsToDelete = this.editableItemComponents.filter(x => x.hasSecondarySelection).map(x => x.item.id);
+        const idsOfItemsToDelete = this.getIdsOfItemsToDelete();
         if (idsOfItemsToDelete.length == 0) return;
-
-        this.loading = true;
-        const indexOfPrimarySelectedItem = this.editableItemComponents.toArray().findIndex(x => x.hasPrimarySelection);
-        const nextItem = indexOfPrimarySelectedItem !== -1 ? this.editableItemComponents.toArray().slice(indexOfPrimarySelectedItem + 1).find(x => !x.hasSecondarySelection) : null;
-
-        if (nextItem) {
-            if (this.noSelectOnArrowKey) {
-                nextItem.hasPrimarySelectionBorderOnly = true;
-                this.selectItem(nextItem.item as T);
-            } else {
-                nextItem.select();
-            }
-        }
-        this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(()=> this.loading = false);
+        // this.loading = true;
+        this.selectNextItemAfterDelete();
+        // this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(()=> this.loading = false);
         this.items = this.items.filter(item => !idsOfItemsToDelete.includes(item.id));
     }
 
 
 
-    protected sort(item?: T) {
+    protected getIdsOfItemsToDelete(): Array<any> {
+        return this.editableItemComponents.filter(x => x.hasSecondarySelection).map(x => x.item.id);
+    }
+
+
+
+    protected selectNextItemAfterDelete(): void {
+        const indexOfFirstSelectedItem = this.editableItemComponents.toArray().findIndex(x => x.hasSecondarySelection);
+        let nextItem = this.editableItemComponents.toArray().slice(indexOfFirstSelectedItem + 1).find(x => !x.hasSecondarySelection);
+        if (!nextItem) nextItem = this.editableItemComponents.toArray().reverse().find(x => !x.hasSecondarySelection);
+        if (!nextItem) return;
+        if (this.noSelectOnArrowKey) {
+            nextItem.hasPrimarySelectionBorderOnly = true;
+            this.selectItem(nextItem.item as T);
+        } else {
+            nextItem.select();
+        }
+    }
+
+
+
+    protected sort(item?: T): void {
         this.items.sort((a, b) => a.text.localeCompare(b.text));
     }
 
@@ -328,20 +337,20 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    protected onInput(text: string) {
+    protected onInput(text: string): void {
         if (this.items.some(item => item.text === text)) console.log('Duplicate Found');
     }
 
 
 
-    protected removeNewItem() {
+    protected removeNewItem(): void {
         const newItemIndex = this.editableItemComponents.toArray().findIndex(itemComponent => itemComponent.isNew);
         if (newItemIndex != -1) this.items.splice(newItemIndex, 1);
     }
 
 
 
-    protected setAllItemsEnableState(isEnabled: boolean) {
+    protected setAllItemsEnableState(isEnabled: boolean): void {
         this.editableItemComponents.forEach(itemComponent => itemComponent.setEnableState(isEnabled));
     }
 
