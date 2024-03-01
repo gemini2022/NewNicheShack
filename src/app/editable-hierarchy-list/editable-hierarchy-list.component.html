@@ -7,19 +7,20 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let editableHierarchyListItem of items">
-        <ns-editable-hierarchy-list-item #listItemComponent
+    <div *ngFor="let item of items">
+        <ns-editable-hierarchy-list-item [item]="item"
+                                         #listItemComponent
                                          (onDoubleClick)="edit()"
                                          (onInput)="onInput($event)"
                                          (showSpinner)="loading = true"
-                                         (addedItemEvent)="onItemAdded($event)"
-                                         [item]="editableHierarchyListItem"
+                                         (removeNewItem)="removeNewItem()"
                                          (onMouseDown)="selectItem($event)"
-                                         (reinitializeItems)="reinitializeItems()"
+                                         (addedItemEvent)="onItemAdded($event)"
                                          (addedItemsEvent)="onItemsAdded($event)"
                                          (editedItemEvent)="onItemEdited($event)"
+                                         (reinitializeItems)="reinitializeItems()"
                                          (arrowChangedEvent)="onArrowChange($event)"
-                                         (removeNewItem)="removeNewItem()"
+                                         (multiItemPasteAlertEvent)="inputAlertEvent.emit($event)"
                                          (setAllItemsEnableState)="setAllItemsEnableState($event)"
                                          (stopMouseDownPropagation)="stopMouseDownPropagation = true"
                                          (setHierarchyItemsArrowEnableState)="setHierarchyItemsArrowEnableState($event)">

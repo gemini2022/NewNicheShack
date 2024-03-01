@@ -33,7 +33,7 @@
           (mouseup)="getTextCaretPosition()"
           (mousedown)="getTextCaretPosition()"
           [contentEditable]="inEditMode == true"
-          [ngClass]="{'edited-list-item-text': inEditMode}"
           (input)="onInput.emit(itemTextElement.innerText)"
+          [ngClass]="{'edited-item-text': inEditMode, 'alerted-item-text': inAlertMode}"
           >{{item.text}}</div>
 </div>

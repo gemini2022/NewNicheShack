@@ -1,9 +1,9 @@
-import { ListItem } from "./list-item";
 import { ListBase } from "./list-base";
-import { CaseType, ExitEditType } from "./enums";
+import { ListItem } from "./list-item";
+import { Observable, take } from "rxjs";
+import { AlertType, CaseType, ExitEditType } from "./enums";
 import { Directive, EventEmitter, Input, Output, QueryList } from "@angular/core";
 import { EditableListItemComponent } from "./editable-list-item/editable-list-item.component";
-import { Observable, take } from "rxjs";
 
 @Directive()
 export class EditableListBase<T extends ListItem> extends ListBase<T> {
@@ -24,9 +24,11 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     // Inputs
     @Input() public isMultiselectable: boolean = true;
     @Input() public caseType: CaseType = CaseType.None;
+    @Input() public multiItemPasteable: boolean = false;
+    @Input() public duplicateItemVerify: boolean = true;
 
     // Events
-    @Output() public inputTypedEvent: EventEmitter<string> = new EventEmitter();
+    @Output() public inputAlertEvent: EventEmitter<AlertType> = new EventEmitter();
     @Output() public deleteKeyPressedEvent: EventEmitter<Array<T>> = new EventEmitter();
 
 
@@ -119,6 +121,23 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
+    public override selectItem(item: T): void {
+        const itemInEditMode = this.editableItemComponents.find(x => x.inEditMode);
+        if (itemInEditMode) {
+            itemInEditMode.exitEditMode();
+
+        } else {
+            const itemComponent = this.editableItemComponents.find(x => x.item.id == item.id);
+            if (itemComponent) {
+                this.addEventListeners();
+                itemComponent.itemElement.nativeElement.focus();
+                this.setSelectedItems(itemComponent);
+            }
+        }
+    }
+
+
+
     private setSelectedItems(item: EditableListItemComponent): void {
         if (this.shiftKeyDown) {
             this.onItemSelectionUsingShiftKey(item);
@@ -199,23 +218,12 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    public override selectItem(item: T): void {
-        const itemComponent = this.editableItemComponents.find(x => x.item.id == item.id);
-        if (itemComponent) {
-            this.addEventListeners();
-            itemComponent.itemElement.nativeElement.focus();
-            this.setSelectedItems(itemComponent);
-        }
-    }
-
-
-
     public add(): void {
         this.addEventListeners();
         this.initializeItems();
         this.stopMouseDownPropagation = false;
         this.items.unshift({ id: '', text: '' } as T);
-        setTimeout(() => this.editableItemComponents.first.identify(this.caseType));
+        setTimeout(() => this.editableItemComponents.first.identify(this.caseType, this.multiItemPasteable, this.duplicateItemVerify));
     }
 
 
@@ -238,32 +246,55 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
 
-    protected onItemsAdded(texts: Array<string>): void {
-        this.postItems(texts)
+    protected onItemsAdded(texts: string[]): void {
+        const newTexts = this.checkForDuplicates(texts);
+        this.postItems(newTexts)
             .pipe(take(1))
-            .subscribe((newItems: Array<T>) => {
+            .subscribe((newItems: T[]) => {
                 this.loading = false;
-                newItems.forEach(newItem => {
-                    this.items.push(newItem);
-                })
-                this.removeNewItem();
-                this.sort();
-
-                let itemComponent: EditableListItemComponent;
-                setTimeout(() => {
-                    this.items.forEach((item, index) => {
-                        const isNewItem = newItems.includes(item);
-                        const currentItemComponent = this.editableItemComponents.get(index);
-
-                        if (isNewItem && currentItemComponent) {
-                            itemComponent = currentItemComponent;
-                            itemComponent.hasSecondarySelection = true;
-                        }
-                    });
-                    this.setSecondarySelectionType();
-                    if (itemComponent) itemComponent.select();
-                });
+                this.addNewItemsToList(newItems);
+                this.selectNewItems(newItems);
             })
+    }
+
+
+
+    protected checkForDuplicates(texts: string[]): string[] {
+        const txts: string[] = [];
+        texts.forEach(str => {
+            const isMatch = this.items.some(item => item.text === str);
+            if (!isMatch) txts.push(str);
+        });
+        return txts;
+    }
+
+
+
+    protected addNewItemsToList(newItems: T[]): void {
+        newItems.forEach(newItem => {
+            this.items.push(newItem);
+        })
+        this.removeNewItem();
+        this.sort();
+    }
+
+
+
+    protected selectNewItems(newItems: T[]): void {
+        let itemComponent: EditableListItemComponent;
+        setTimeout(() => {
+            this.items.forEach((item, index) => {
+                const isNewItem = newItems.includes(item);
+                const currentItemComponent = this.editableItemComponents.get(index);
+
+                if (isNewItem && currentItemComponent) {
+                    itemComponent = currentItemComponent;
+                    itemComponent.hasSecondarySelection = true;
+                }
+            });
+            this.setSecondarySelectionType();
+            if (itemComponent) itemComponent.select();
+        });
     }
 
 
@@ -271,7 +302,7 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
     public edit(): void {
         const item = this.editableItemComponents.find(x => x.hasPrimarySelection);
         if (!item) return;
-        item.enterEditMode(this.caseType);
+        item.enterEditMode(this.caseType, this.multiItemPasteable, this.duplicateItemVerify);
     }
 
 
@@ -297,9 +328,12 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
         const idsOfItemsToDelete = this.getIdsOfItemsToDelete();
         if (idsOfItemsToDelete.length == 0) return;
         this.loading = true;
-        this.selectNextItemAfterDelete();
-        this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(()=> this.loading = false);
-        this.items = this.items.filter(item => !idsOfItemsToDelete.includes(item.id));
+
+        this.deleteItems(idsOfItemsToDelete).pipe(take(1)).subscribe(() => {
+            this.loading = false
+            this.selectNextItemAfterDelete();
+            this.items = this.items.filter(item => !idsOfItemsToDelete.includes(item.id));
+        });
     }
 
 
@@ -332,13 +366,24 @@ export class EditableListBase<T extends ListItem> extends ListBase<T> {
 
 
     public getSelectedItems(): Array<T> {
-        return this.editableItemComponents.filter(x => x.hasSecondarySelection).map(x => ({ id: x.item.id, text: x.item.text } as T));
+        return this.editableItemComponents.filter(itemComponent => itemComponent.hasSecondarySelection).map(itemComponent => itemComponent.item as T);
     }
 
 
 
     protected onInput(text: string): void {
-        if (this.items.some(item => item.text === text)) console.log('Duplicate Found');
+        if (this.duplicateItemVerify) {
+            const editedItemComponent = this.editableItemComponents.find(itemComponent => itemComponent.inEditMode);
+            if (editedItemComponent) {
+                if (this.items.some(item => item.text === text && item !== editedItemComponent.item)) {
+                    editedItemComponent.inAlertMode = true;
+                    this.inputAlertEvent.emit(AlertType.Duplicate);
+                } else {
+                    editedItemComponent.inAlertMode = false;
+                    this.inputAlertEvent.emit(AlertType.None);
+                }
+            }
+        }
     }
 
 

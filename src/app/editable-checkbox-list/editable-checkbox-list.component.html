@@ -7,20 +7,21 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let editableCheckboxListItem of items">
-        <ns-editable-checkbox-list-item #listItemComponent
+    <div *ngFor="let item of items">
+        <ns-editable-checkbox-list-item [item]="item"
+                                        #listItemComponent
                                         (onDoubleClick)="edit()"
                                         (onInput)="onInput($event)"
                                         (showSpinner)="loading = true"
-                                        [item]="editableCheckboxListItem"
+                                        (removeNewItem)="removeNewItem()"
                                         (onMouseDown)="selectItem($event)"
                                         (addedItemEvent)="onItemAdded($event)"
-                                        (reinitializeItems)="reinitializeItems()"
                                         (addedItemsEvent)="onItemsAdded($event)"
                                         (editedItemEvent)="onItemEdited($event)"
-                                        (removeNewItem)="removeNewItem()"
-                                        (checkboxChangedEvent)="checkboxChangedEvent.emit($event)"
+                                        (reinitializeItems)="reinitializeItems()"
                                         (setAllItemsEnableState)="setAllItemsEnableState($event)"
+                                        (multiItemPasteAlertEvent)="inputAlertEvent.emit($event)"
+                                        (checkboxChangedEvent)="checkboxChangedEvent.emit($event)"
                                         (stopMouseDownPropagation)="stopMouseDownPropagation = true"
                                         (setCheckboxListItemsCheckboxEnableState)="setCheckboxListItemsCheckboxEnableState($event)">
         </ns-editable-checkbox-list-item>

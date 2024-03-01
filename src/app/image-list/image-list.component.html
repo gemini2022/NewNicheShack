@@ -5,10 +5,10 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let imageListItem of items;">
-        <ns-image-list-item #listItemComponent
-                                [item]="imageListItem"
-                                (onMouseDown)="$event ? selectItem($event) : null">
+    <div *ngFor="let item of items;">
+        <ns-image-list-item [item]="item"
+                            #listItemComponent
+                            (onMouseDown)="$event ? selectItem($event) : null">
         </ns-image-list-item>
     </div>
 </div>

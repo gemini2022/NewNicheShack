@@ -11,7 +11,7 @@ import { CheckboxListItem } from './checkbox-list-item';
 import { ImageListItem } from './image-list-item';
 import { ImageListComponent } from './image-list/image-list.component';
 import { EditableHierarchyListComponent } from './editable-hierarchy-list/editable-hierarchy-list.component';
-import { HierarchyItem } from './hierarchy-list-item';
+import { HierarchyItem } from './hierarchy-item';
 import { KeywordsHierarchyComponent } from './keywords-hierarchy/keywords-hierarchy.component';
 
 @Component({
@@ -40,7 +40,7 @@ export class AppComponent {
 
   // ViewChild
   @ViewChild('list') list!: EditableListComponent;
-  @ViewChild('hierarchy') hierarchy!: EditableHierarchyListComponent;
+  @ViewChild('niches') niches!: EditableHierarchyListComponent;
 
 
 
@@ -86,15 +86,14 @@ export class AppComponent {
     this.list.postItems = (texts: Array<string>) => { return this.dataService.post('api/List/PostItems', { texts: texts }) };
     this.list.putItem = (listItem: ListItem) => { return this.dataService.put('api/List', { id: listItem.id, text: listItem.text }) };
 
-    // Hierarchy
-    this.hierarchy.getItems = () => { return this.dataService.get('api/Hierarchy') };
-    this.hierarchy.deleteItems = (ids: Array<any>) => { return this.dataService.delete('api/Hierarchy', { ids: ids }) };
-    this.hierarchy.getChildItems = (parentId: any) => { return this.dataService.get('api/Hierarchy/Children', [{ key: 'parentId', value: parentId }]) };
-    this.hierarchy.postHierarchyItem = (parentId: any, text: string) => { return this.dataService.post('api/Hierarchy', { parentId: parentId, text: text }) };
-    this.hierarchy.putItem = (hierarchyItem: HierarchyItem) => { return this.dataService.put('api/Hierarchy', { id: hierarchyItem.id, text: hierarchyItem.text, tier: hierarchyItem.tier }) };
+    // Niches
+    this.niches.tier[1] = { duplicateItemVerify: false };
+    this.niches.getItems = () => { return this.dataService.get('api/Niches') };
+    this.niches.deleteItems = (ids: Array<any>) => { return this.dataService.delete('api/Niches', { ids: ids }) };
+    this.niches.getChildItems = (parentId: any) => { return this.dataService.get('api/Niches/Children', [{ key: 'parentId', value: parentId }]) };
+    this.niches.postHierarchyItem = (parentId: any, text: string) => { return this.dataService.post('api/Niches', { parentId: parentId, text: text }) };
+    this.niches.putItem = (hierarchyItem: HierarchyItem) => { return this.dataService.put('api/Niches', { id: hierarchyItem.id, text: hierarchyItem.text }) };
   }
-
-
 
 
   onSelectedListItems(selectedItems: Array<ListItem>) {
@@ -108,6 +107,12 @@ export class AppComponent {
   }
 
 
+  deleteItems(ids: Array<any>) {
+    this.dataService.delete('api/Hierarchy', {
+      ids: ids
+    }
+    ).subscribe();
+  }
 
 
   onSelectedHierarchyItems(selectedItems: Array<ListItem>) {
@@ -117,8 +122,8 @@ export class AppComponent {
 
 
   deleteHierarchyItems() {
-    this.hierarchy.getSelectedItems();
-    this.hierarchy.delete();
+    this.niches.getSelectedItems();
+    this.niches.delete();
   }
 
 

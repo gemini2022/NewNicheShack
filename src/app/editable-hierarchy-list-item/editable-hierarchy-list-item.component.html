@@ -16,7 +16,7 @@
                  'list-secondary-selection-bottom': secondarySelectionType == SecondarySelectionType.Bottom}"
      [ngStyle]="{'display': multipleItemsPasted ? 'block' : 'flex', 'height': multipleItemsPasted ? 'fit-content' : null}">
 
-     <div [style.paddingLeft.px]="item.tier * 35"
+     <div [style.paddingLeft.px]="item.tier * (item.tier === 0 || item.isParent ? 35: 45)"
           class="hierarchy-arrow-component-container"
           (mousedown)="stopItemSelectionPropagation = true"
           (dblclick)="stopItemDoubleClickPropagation = true">
@@ -31,12 +31,12 @@
      
      <div #itemTextElement
           (paste)="onPaste($event)"
-          class="hierarchy-list-item-text"
+          class="hierarchy-item-text"
           (keydown)="getTextCaretPosition()"
           (mouseup)="getTextCaretPosition()"
           (mousedown)="getTextCaretPosition()"
           [contentEditable]="inEditMode == true"
-          [ngClass]="{'edited-list-item-text': inEditMode}"
           (input)="onInput.emit(itemTextElement.innerText)"
+          [ngClass]="{'edited-item-text': inEditMode, 'alerted-item-text': inAlertMode}"
           >{{item.text}}</div>
 </div>

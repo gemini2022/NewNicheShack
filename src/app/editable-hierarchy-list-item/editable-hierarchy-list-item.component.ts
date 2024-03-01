@@ -1,6 +1,6 @@
 import { CaseType, ExitEditType } from '../enums';
 import { CommonModule } from '@angular/common';
-import { HierarchyItem } from '../hierarchy-list-item';
+import { HierarchyItem } from '../hierarchy-item';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { EditableListItemBase } from '../editable-list-item-base';
 import { HierarchyArrowComponent } from '../hierarchy-arrow/hierarchy-arrow.component';
@@ -27,8 +27,8 @@ export class EditableHierarchyListItemComponent extends EditableListItemBase<Hie
   @Output() public arrowChangedEvent: EventEmitter<EditableHierarchyListItemComponent> = new EventEmitter();
 
 
-  public override enterEditMode(caseType: CaseType) {
-    super.enterEditMode(caseType);
+  public override enterEditMode(caseType: CaseType, multiItemPasteable: boolean, duplicateItemVerify: boolean) {
+    super.enterEditMode(caseType, multiItemPasteable, duplicateItemVerify);
     this.setHierarchyItemsArrowEnableState.emit(false);
   }
 
@@ -36,7 +36,7 @@ export class EditableHierarchyListItemComponent extends EditableListItemBase<Hie
 
   public override exitEditMode(exitEditType?: ExitEditType) {
     super.exitEditMode(exitEditType);
-    this.setHierarchyItemsArrowEnableState.emit(true);
+    if(!this.inAlertMode) this.setHierarchyItemsArrowEnableState.emit(true);
   }
 
 

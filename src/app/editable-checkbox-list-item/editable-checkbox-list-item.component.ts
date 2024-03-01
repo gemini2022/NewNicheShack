@@ -18,8 +18,8 @@ export class EditableCheckboxListItemComponent extends EditableListItemBase<Chec
   @Output() public setCheckboxListItemsCheckboxEnableState: EventEmitter<boolean> = new EventEmitter();
 
 
-  public override enterEditMode(caseType: CaseType) {
-    super.enterEditMode(caseType);
+  public override enterEditMode(caseType: CaseType, multiItemPasteable: boolean, duplicateItemVerify: boolean) {
+    super.enterEditMode(caseType, multiItemPasteable, duplicateItemVerify);
     this.setCheckboxListItemsCheckboxEnableState.emit(false);
   }
 

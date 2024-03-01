@@ -5,9 +5,9 @@
         <i class="fa-solid fa-spinner fa-spin-pulse"></i>
     </div>
 
-    <div *ngFor="let listItem of items;">
-        <ns-list-item #listItemComponent
-                      [item]="listItem"
+    <div *ngFor="let item of items;">
+        <ns-list-item [item]="item"
+                      #listItemComponent
                       (onMouseDown)="$event ? selectItem($event) : null">
         </ns-list-item>
     </div>

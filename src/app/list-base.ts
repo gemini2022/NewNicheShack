@@ -1,8 +1,8 @@
+import { Observable, take } from "rxjs";
 import { ListItem } from "./list-item";
 import { SecondarySelectionType } from "./enums";
 import { ListItemComponent } from "./list-item/list-item.component";
 import { Directive, EventEmitter, Input, Output, QueryList, Renderer2, ViewChildren, inject } from "@angular/core";
-import { Observable, take } from "rxjs";
 
 @Directive()
 export abstract class ListBase<T extends ListItem> {

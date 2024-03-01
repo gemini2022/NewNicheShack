@@ -111,11 +111,17 @@
 
 
 
-.edited-list-item-text {
+.edited-item-text {
     outline: none;
     text-overflow: unset;
     border-color: $list-edited-item-border-color;
     background: $list-edited-item-background-color;
+}
+
+
+
+.alerted-item-text {
+    border-color: $list-alerted-item-border-color;
 }
 
 
